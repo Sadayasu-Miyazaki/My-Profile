@@ -2,234 +2,183 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>大木 / Passent - Portal</title>
+<title>Passent Glass Links</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
 <style>
 /* =========================================================
-   Neon Glass Portal (色合い変更 + ガンガン動く)
+   Bright iOS-like Glass (回転オーロラ無し)
+   - スクロール/押下で気持ちよく動く
+   - “出っ張ったガラス”っぽいハイライト
+   - どんなデバイスでも中央に綺麗
 ========================================================= */
 :root{
-  /* ここが全体の色味（ネオン寄り） */
-  --bg0:#050612;
-  --bg1:#6d28d9;   /* purple */
-  --bg2:#06b6d4;   /* cyan */
-  --bg3:#f97316;   /* orange */
-  --bg4:#22c55e;   /* green */
-  --bg5:#f43f5e;   /* rose */
+  --bgA:#f7fbff;
+  --bgB:#eaf2ff;
+  --bgC:#f6e8ff;
+  --bgD:#e7fff6;
 
-  --text:#f8fafc;
-  --muted: rgba(226,232,240,0.88);
+  --ink:#0b1220;
+  --muted: rgba(15,23,42,0.72);
 
-  --glassA: rgba(255,255,255,0.10);
-  --glassB: rgba(255,255,255,0.06);
-  --stroke: rgba(255,255,255,0.18);
+  --glass: rgba(255,255,255,0.62);
+  --glass2: rgba(255,255,255,0.42);
+  --stroke: rgba(15,23,42,0.10);
 
-  --shadow1: 0 18px 45px rgba(0,0,0,0.55);
-  --shadow2: 0 18px 55px rgba(0,0,0,0.65);
+  --shadow: 0 18px 60px rgba(2,6,23,0.18);
+  --shadow2: 0 16px 48px rgba(2,6,23,0.14);
+
+  --radius: 26px;
 
   /* JSが書き換える */
-  --pull: 0px;
   --scrollY: 0px;
-  --tiltX: 0deg;   /* カード傾き */
+  --pull: 0px;
+  --tiltX: 0deg;
   --tiltY: 0deg;
-  --glow: 0.75;    /* 外周発光の強さ */
 }
 
+/* 途切れない背景 */
 html, body{
   height: 100%;
-  background: var(--bg0);
-  background-color: var(--bg0);
+  background: #f7fbff;
+  background-color: #f7fbff;
 }
-
 body{
   margin: 0;
   min-height: 100vh;
-  padding: 14px 10px 22px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--text);
-  overflow-x: hidden;
+  color: var(--ink);
 
+  /* どんなデバイスでも中央配置 */
+  display: grid;
+  place-items: center;
+
+  /* iPhoneのノッチ/ホームバー対策 */
+  padding: calc(14px + env(safe-area-inset-top))
+           calc(12px + env(safe-area-inset-right))
+           calc(18px + env(safe-area-inset-bottom))
+           calc(12px + env(safe-area-inset-left));
+
+  overflow-x: hidden;
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
 }
 
-/* 背景：途切れない固定レイヤー + ぐるぐる動くネオン */
+/* 背景：明るめのiOSっぽいグラデ */
 body::before{
   content:"";
   position: fixed;
-  inset: -35vh -35vw;
-  z-index: -4;
+  inset: -25vh -25vw;
+  z-index: -3;
   background:
-    radial-gradient(circle at 10% 20%, rgba(109,40,217,0.35), transparent 52%),
-    radial-gradient(circle at 80% 10%, rgba(6,182,212,0.28), transparent 50%),
-    radial-gradient(circle at 80% 85%, rgba(249,115,22,0.22), transparent 55%),
-    radial-gradient(circle at 20% 85%, rgba(34,197,94,0.18), transparent 58%),
-    radial-gradient(circle at 50% 50%, rgba(244,63,94,0.14), transparent 60%),
-    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 65%);
-  filter: blur(22px) saturate(135%);
-  transform: translate3d(0, calc(var(--scrollY) * -0.10), 0) scale(1.05);
+    radial-gradient(circle at 12% 18%, rgba(56,189,248,0.30), transparent 55%),
+    radial-gradient(circle at 85% 20%, rgba(167,139,250,0.26), transparent 58%),
+    radial-gradient(circle at 80% 85%, rgba(34,197,94,0.20), transparent 62%),
+    radial-gradient(circle at 15% 85%, rgba(244,114,182,0.18), transparent 62%),
+    linear-gradient(180deg, var(--bgA), var(--bgB));
+  filter: saturate(115%) blur(0px);
+  transform: translate3d(0, calc(var(--scrollY) * -0.06), 0) scale(1.02);
   will-change: transform;
 }
 
-/* 動くオーロラ膜 */
+/* うっすら粒（回転なし、静かに漂う） */
 body::after{
   content:"";
   position: fixed;
-  inset: -40vh -40vw;
-  z-index: -3;
-  background:
-    conic-gradient(from 120deg,
-      rgba(109,40,217,0.35),
-      rgba(6,182,212,0.28),
-      rgba(249,115,22,0.22),
-      rgba(34,197,94,0.18),
-      rgba(244,63,94,0.22),
-      rgba(109,40,217,0.35)
-    );
-  filter: blur(50px) saturate(150%);
-  opacity: 0.55;
-  transform: translate3d(0, calc(var(--scrollY) * -0.14), 0) rotate(0deg);
-  will-change: transform;
-  animation: auroraSpin 14s linear infinite;
-}
-
-@keyframes auroraSpin{
-  from { transform: translate3d(0, calc(var(--scrollY) * -0.14), 0) rotate(0deg); }
-  to   { transform: translate3d(0, calc(var(--scrollY) * -0.14), 0) rotate(360deg); }
-}
-
-/* 小さい粒子の流れ（軽め） */
-.particles{
-  position: fixed;
-  inset: 0;
+  inset: -10vh -10vw;
   z-index: -2;
-  pointer-events: none;
-  opacity: 0.35;
   background:
-    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.8), transparent 60%),
-    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.65), transparent 60%),
-    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.55), transparent 60%),
-    radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55), transparent 60%),
-    radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.55), transparent 60%),
-    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.55), transparent 60%);
-  animation: particlesDrift 9s ease-in-out infinite;
-  filter: blur(0.2px);
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.9), transparent 60%),
+    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.75), transparent 60%),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.65), transparent 60%),
+    radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.65), transparent 60%),
+    radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.65), transparent 60%),
+    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.65), transparent 60%);
+  opacity: 0.28;
+  transform: translate3d(0, calc(var(--scrollY) * -0.10), 0);
+  animation: drift 8.5s ease-in-out infinite;
+  will-change: transform;
 }
-
-@keyframes particlesDrift{
-  0%,100% { transform: translate3d(0,0,0); }
-  50%     { transform: translate3d(0, -18px, 0); }
-}
-
-/* PC時だけ中央寄せ */
-@media (min-width: 768px) {
-  body{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 18px;
-  }
+@keyframes drift{
+  0%,100%{ transform: translate3d(0, calc(var(--scrollY) * -0.10), 0); }
+  50%     { transform: translate3d(0, calc(var(--scrollY) * -0.10 - 16px), 0); }
 }
 
 /* =========================================================
-   Card: Neon Glass Window + 3D Tilt + 伸びる
+   Card: “出っ張ったガラス” + ロック画面風の厚み
 ========================================================= */
+.shell{
+  width: min(92vw, 480px);
+  /* どのデバイスでも切れにくい */
+  max-width: 480px;
+}
+
 .card{
-  width: 100%;
-  max-width: 470px;
-  border-radius: 24px;
+  border-radius: var(--radius);
   padding: 20px 18px 18px;
   box-sizing: border-box;
-  margin: 10px auto;
 
-  background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
-  border: 1px solid rgba(255,255,255,0.16);
-  box-shadow: var(--shadow1);
-  backdrop-filter: blur(30px) saturate(150%);
-  -webkit-backdrop-filter: blur(30px) saturate(150%);
+  /* iOSっぽい明るいガラス */
+  background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.50));
+  border: 1px solid rgba(2,6,23,0.10);
+  box-shadow: var(--shadow);
 
-  display: flex;
-  flex-direction: column;
+  backdrop-filter: blur(22px) saturate(140%);
+  -webkit-backdrop-filter: blur(22px) saturate(140%);
+
   position: relative;
   overflow: hidden;
 
+  /* スクロール/押下で動く（控えめで高級） */
   transform:
-    translate3d(0, calc(var(--pull) * 0.36), 0)
+    translate3d(0, calc(var(--pull) * 0.34), 0)
     rotateX(var(--tiltX))
-    rotateY(var(--tiltY))
-    scale3d(1, calc(1 + (abs(var(--pull)) / 900)), 1);
+    rotateY(var(--tiltY));
   transform-origin: center;
   will-change: transform;
 
-  animation: popIn 0.65s cubic-bezier(.2,.95,.2,1);
+  animation: cardIn 0.55s cubic-bezier(.2,.9,.2,1);
 }
 
-/* 走る光のスイープ */
+/* “出っ張ったガラス”のハイライト（上側の厚み） */
 .card::before{
   content:"";
   position: absolute;
-  inset: -55% -80%;
-  background: linear-gradient(
-    110deg,
-    transparent 35%,
-    rgba(255,255,255,0.18) 45%,
-    rgba(255,255,255,0.08) 55%,
-    transparent 65%
-  );
-  transform: translateX(-30%) rotate(10deg);
-  opacity: 0.8;
+  inset: 0;
+  background:
+    radial-gradient(1200px 220px at 50% 0%,
+      rgba(255,255,255,0.95),
+      rgba(255,255,255,0.40) 35%,
+      transparent 70%),
+    linear-gradient(180deg,
+      rgba(255,255,255,0.55),
+      rgba(255,255,255,0.00) 35%);
+  opacity: 0.75;
   pointer-events: none;
-  animation: shine 4.4s ease-in-out infinite;
 }
 
-/* 外周ネオン */
+/* 外周の“ガラス縁” */
 .card::after{
   content:"";
   position: absolute;
-  inset: -2px;
-  border-radius: 26px;
-  padding: 2px;
-  background: conic-gradient(
-    from 210deg,
-    rgba(109,40,217,0.85),
-    rgba(6,182,212,0.70),
-    rgba(249,115,22,0.65),
-    rgba(34,197,94,0.60),
-    rgba(244,63,94,0.68),
-    rgba(109,40,217,0.85)
-  );
-  -webkit-mask:
-    linear-gradient(#000 0 0) content-box,
-    linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-
-  opacity: var(--glow);
-  filter: blur(0.2px);
+  inset: 0;
+  border-radius: var(--radius);
   pointer-events: none;
-  animation: borderSpin 8.5s linear infinite;
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.70) inset,
+    0 -1px 0 rgba(2,6,23,0.06) inset;
 }
 
-@keyframes borderSpin{
-  from{ transform: rotate(0deg); }
-  to  { transform: rotate(360deg); }
-}
-
-@keyframes popIn{
-  from{ opacity: 0; transform: translateY(18px) scale(0.98); }
+/* ふわっと浮く（ロック画面開く感じ） */
+@keyframes cardIn{
+  from{ opacity: 0; transform: translateY(14px) scale(0.985); }
   to  { opacity: 1; transform: translateY(0) scale(1); }
-}
-@keyframes shine{
-  0%,100%{ transform: translateX(-35%) rotate(10deg); opacity: 0.55; }
-  50%    { transform: translateX(35%)  rotate(10deg); opacity: 0.88; }
 }
 
 @media (prefers-reduced-motion: reduce){
-  body::after, .particles, .card, .card::before, .card::after{ animation: none !important; }
+  body::after, .card{ animation: none !important; }
 }
 
 /* =========================================================
@@ -239,61 +188,41 @@ body::after{
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 9px;
-  margin-bottom: 10px;
+  gap: 10px;
+  margin-bottom: 8px;
 }
-
 .title-accent{
   width: 30px;
   height: 30px;
   border-radius: 999px;
-  background: conic-gradient(from 200deg,
-    rgba(109,40,217,1),
-    rgba(6,182,212,1),
-    rgba(249,115,22,1),
-    rgba(34,197,94,1),
-    rgba(244,63,94,1),
-    rgba(109,40,217,1)
-  );
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  background: linear-gradient(135deg, rgba(56,189,248,1), rgba(167,139,250,1), rgba(244,114,182,1));
+  display: grid;
+  place-items: center;
   color: #fff;
   font-size: 14px;
-  box-shadow: 0 14px 30px rgba(0,0,0,0.6);
-  border: 1px solid rgba(255,255,255,0.22);
-  animation: iconPulse 2.2s ease-in-out infinite;
+  box-shadow: 0 14px 26px rgba(2,6,23,0.18);
+  border: 1px solid rgba(255,255,255,0.55);
 }
-
-@keyframes iconPulse{
-  0%,100%{ transform: scale(1); filter: brightness(1); }
-  50%    { transform: scale(1.06); filter: brightness(1.25); }
-}
-
 h2{
   margin: 0;
   text-align: center;
-  font-weight: 780;
-  letter-spacing: 0.02em;
-  text-shadow: 0 10px 30px rgba(0,0,0,0.55);
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #0b1220;
 }
 
 .status-pill{
   align-self: center;
-  margin: 6px 0 14px;
+  margin: 6px 0 12px;
   padding: 7px 12px;
   border-radius: 999px;
   font-size: 12px;
-  color: rgba(240,249,255,0.95);
-  background: rgba(6,182,212,0.14);
-  border: 1px solid rgba(6,182,212,0.30);
-  box-shadow: 0 12px 28px rgba(0,0,0,0.22) inset;
-  animation: pillFloat 3.6s ease-in-out infinite;
-}
-
-@keyframes pillFloat{
-  0%,100%{ transform: translateY(0); }
-  50%    { transform: translateY(-3px); }
+  color: rgba(15,23,42,0.75);
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(2,6,23,0.08);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.75) inset,
+    0 10px 22px rgba(2,6,23,0.06);
 }
 
 /* =========================================================
@@ -303,7 +232,7 @@ h2{
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 10px 0 14px;
+  margin: 8px 0 14px;
 }
 
 .avatar-wrap{
@@ -311,69 +240,46 @@ h2{
   height: 60px;
   border-radius: 18px;
   padding: 2px;
-  background: conic-gradient(from 250deg,
-    rgba(109,40,217,0.95),
-    rgba(6,182,212,0.85),
-    rgba(249,115,22,0.75),
-    rgba(34,197,94,0.70),
-    rgba(244,63,94,0.80),
-    rgba(109,40,217,0.95)
-  );
-  box-shadow: 0 18px 40px rgba(0,0,0,0.65);
+  background: linear-gradient(135deg, rgba(56,189,248,1), rgba(167,139,250,1), rgba(244,114,182,1));
+  box-shadow: 0 18px 38px rgba(2,6,23,0.16);
   position: relative;
   overflow: hidden;
-  animation: avatarGlow 3.2s ease-in-out infinite;
 }
-
-@keyframes avatarGlow{
-  0%,100%{ filter: brightness(1) saturate(1.1); }
-  50%    { filter: brightness(1.18) saturate(1.4); }
-}
-
-.avatar-wrap::after{
-  content:"";
-  position: absolute;
-  inset: -30%;
-  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.33), transparent 55%);
-  transform: rotate(18deg);
-  pointer-events: none;
-}
-
 .avatar-inner{
   width: 100%;
   height: 100%;
   border-radius: 16px;
   overflow: hidden;
-  background: radial-gradient(circle at 20% 0, #0b1226, #020617);
-  border: 1px solid rgba(255,255,255,0.12);
+  background: #e8eefc;
+  border: 1px solid rgba(2,6,23,0.08);
 }
 .avatar-inner img{
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transform: scale(1.05);
 }
-
 .profile-text{ flex: 1; min-width: 0; }
 .profile-name{
   margin: 0 0 2px;
   font-size: 16px;
-  font-weight: 800;
-  color: var(--text);
+  font-weight: 850;
+  color: #0b1220;
 }
 .profile-sub{
   margin: 0;
   font-size: 12px;
-  color: var(--muted);
+  color: rgba(15,23,42,0.72);
 }
 
 /* =========================================================
-   Links
+   Links: “最近のかっこいいサイト”の挙動
+   - 押下で沈み/反射が動く
+   - スクロールで順に出現
 ========================================================= */
 .links{
   display: flex;
   flex-direction: column;
-  gap: 9px;
+  gap: 10px;
   margin-top: 6px;
 }
 
@@ -383,101 +289,78 @@ h2{
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 10px 12px;
-  border-radius: 15px;
+  padding: 11px 12px;
+  border-radius: 16px;
   text-decoration: none;
-  color: #e5e7eb;
+  color: #0b1220;
 
-  border: 1px solid rgba(255,255,255,0.14);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.48);
+  /* ガラスボタン */
+  background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.50));
+  border: 1px solid rgba(2,6,23,0.10);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.85) inset,
+    0 16px 32px rgba(2,6,23,0.10);
+
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
 
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+
+  /* スクロール出現 */
   opacity: 0;
-  transform: translateY(14px) scale(0.985);
+  transform: translateY(12px) scale(0.99);
   transition:
-    transform 0.18s ease,
+    opacity 0.50s ease,
+    transform 0.50s cubic-bezier(.2,.9,.2,1),
     box-shadow 0.18s ease,
-    filter 0.18s ease,
     border-color 0.18s ease,
-    opacity 0.55s ease;
+    filter 0.18s ease;
 }
 
-/* 出現 */
+/* 出現後 */
 .link-btn.is-in{
   opacity: 1;
   transform: translateY(0) scale(1);
 }
 
-/* 常に“ふわふわ” */
-.link-btn.is-in{
-  animation: btnFloat 3.6s ease-in-out infinite;
-}
-.link-btn.is-in:nth-child(2){ animation-delay: .15s; }
-.link-btn.is-in:nth-child(3){ animation-delay: .30s; }
-.link-btn.is-in:nth-child(4){ animation-delay: .45s; }
-.link-btn.is-in:nth-child(5){ animation-delay: .60s; }
-.link-btn.is-in:nth-child(6){ animation-delay: .75s; }
-
-@keyframes btnFloat{
-  0%,100%{ transform: translateY(0) scale(1); }
-  50%    { transform: translateY(-4px) scale(1.01); }
-}
-
-/* ホバー */
-.link-btn:hover{
-  filter: brightness(1.08);
-  transform: translateY(-2px) scale(1.01);
-  box-shadow: 0 20px 45px rgba(0,0,0,0.58);
-  border-color: rgba(255,255,255,0.22);
-}
-.link-btn:active{
-  transform: translateY(0) scale(1.0);
-  box-shadow: 0 14px 30px rgba(0,0,0,0.48);
-}
-
-/* 光の流れ（ボタン内） */
-.link-btn::after{
-  content:"";
-  position: absolute;
-  inset: -60% -70%;
-  background: linear-gradient(110deg,
-    transparent 35%,
-    rgba(255,255,255,0.16) 45%,
-    rgba(255,255,255,0.06) 55%,
-    transparent 65%
-  );
-  transform: translateX(-35%) rotate(10deg);
-  opacity: 0.0;
-  pointer-events: none;
-}
-.link-btn.is-in::after{
-  opacity: 0.55;
-  animation: btnShine 5.6s ease-in-out infinite;
-}
-@keyframes btnShine{
-  0%,100%{ transform: translateX(-35%) rotate(10deg); opacity: 0.30; }
-  50%    { transform: translateX(35%)  rotate(10deg); opacity: 0.65; }
-}
-
-/* 押した場所に波紋 */
+/* 押した時の反射が“走る” */
 .link-btn::before{
   content:"";
   position: absolute;
-  inset: -60%;
+  inset: -60% -60%;
   background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%),
-    rgba(255,255,255,0.24),
-    transparent 58%);
+    rgba(255,255,255,0.95),
+    rgba(255,255,255,0.35) 35%,
+    transparent 65%);
   opacity: 0;
-  transform: scale(0.82);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: scale(0.9);
+  transition: opacity 0.20s ease, transform 0.20s ease;
   pointer-events: none;
 }
 .link-btn.is-press::before{
-  opacity: 1;
-  transform: scale(1.18);
+  opacity: 0.75;
+  transform: scale(1.15);
+}
+
+/* “スッ”と沈む（最近のUIっぽい） */
+.link-btn:active{
+  transform: translateY(1px) scale(0.995);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.85) inset,
+    0 10px 22px rgba(2,6,23,0.10);
+}
+
+/* ホバー（PC） */
+@media (hover:hover){
+  .link-btn:hover{
+    filter: brightness(1.03);
+    border-color: rgba(2,6,23,0.14);
+    box-shadow:
+      0 1px 0 rgba(255,255,255,0.85) inset,
+      0 20px 40px rgba(2,6,23,0.12);
+    transform: translateY(-1px);
+  }
 }
 
 /* 左アイコン */
@@ -485,22 +368,14 @@ h2{
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  background: rgba(2,6,23,0.60);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 14px 25px rgba(0,0,0,0.5);
-  border: 1px solid rgba(255,255,255,0.14);
-  overflow: hidden;
+  background: rgba(255,255,255,0.85);
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(2,6,23,0.08);
+  box-shadow:
+    0 1px 0 rgba(255,255,255,0.85) inset,
+    0 10px 20px rgba(2,6,23,0.10);
   flex-shrink: 0;
-  position: relative;
-}
-.link-icon::after{
-  content:"";
-  position: absolute;
-  inset: -40%;
-  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18), transparent 55%);
-  pointer-events: none;
 }
 .link-icon img,
 .link-icon svg{
@@ -508,220 +383,199 @@ h2{
   height: 18px;
 }
 
-/* テキスト部 */
+/* テキスト */
 .link-main{ flex: 1; min-width: 0; }
 .link-title{
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 900;
   margin: 0;
-  color: #f1f5f9;
-  letter-spacing: 0.01em;
+  color: #0b1220;
 }
 .link-sub{
   font-size: 11px;
   margin: 1px 0 0;
-  color: rgba(209,213,219,0.92);
+  color: rgba(15,23,42,0.70);
 }
 
-/* 右矢印 */
 .link-arrow{
   font-size: 18px;
-  opacity: 0.78;
+  opacity: 0.55;
   transform: translateX(0);
   transition: transform 0.18s ease, opacity 0.18s ease;
 }
-.link-btn:hover .link-arrow{
-  transform: translateX(3px);
-  opacity: 1;
+@media (hover:hover){
+  .link-btn:hover .link-arrow{
+    transform: translateX(3px);
+    opacity: 0.8;
+  }
 }
 
-/* サービス色（よりネオン） */
-.link-btn.discord{
-  background: linear-gradient(135deg, rgba(88,101,242,0.45), rgba(109,40,217,0.34));
-}
-.link-btn.instagram{
-  background: linear-gradient(135deg, rgba(244,114,182,0.42), rgba(109,40,217,0.32));
-}
-.link-btn.x{
-  background: linear-gradient(135deg, rgba(148,163,184,0.20), rgba(15,23,42,0.58));
-}
-.link-btn.line{
-  background: linear-gradient(135deg, rgba(16,185,129,0.40), rgba(6,182,212,0.26));
-}
-.link-btn.secret{
-  background: linear-gradient(135deg, rgba(56,189,248,0.42), rgba(109,40,217,0.30));
-}
-.link-btn.sharefire{
-  background: linear-gradient(135deg, rgba(249,115,22,0.42), rgba(244,63,94,0.26));
-}
+/* サービスごとの“さりげない”色 */
+.link-btn.discord{ border-color: rgba(88,101,242,0.22); }
+.link-btn.instagram{ border-color: rgba(244,114,182,0.22); }
+.link-btn.x{ border-color: rgba(15,23,42,0.18); }
+.link-btn.line{ border-color: rgba(16,185,129,0.20); }
+.link-btn.secret{ border-color: rgba(56,189,248,0.22); }
+.link-btn.sharefire{ border-color: rgba(249,115,22,0.22); }
 
 .footer{
   margin-top: 12px;
   text-align: center;
   font-size: 11px;
-  color: rgba(241,245,249,0.65);
+  color: rgba(15,23,42,0.60);
   letter-spacing: 0.04em;
-  opacity: 0.95;
 }
 
-/* 端末で負荷が強い時の保険（無効にしたいなら削除OK） */
+/* 極小端末でも切れにくく */
 @media (max-width: 360px){
-  .card::after{ opacity: 0.6; }
+  .card{ padding: 18px 14px 16px; }
+  .profile-sub{ font-size: 11px; }
 }
-
-/* “abs()”未対応対策（古い環境）：下のJSで補助してるのでOK */
 </style>
 </head>
 
 <body>
-  <div class="particles"></div>
+  <div class="shell">
+    <div class="card" id="glassCard">
+      <!-- タイトル -->
+      <div class="title-row">
+        <div class="title-accent">🔗</div>
+        <h2>Passent Glass Links</h2>
+      </div>
+      <div class="status-pill">大木 / Passent のSNS & サイトまとめ</div>
 
-  <div class="card" id="glassCard">
-    <!-- タイトル -->
-    <div class="title-row">
-      <div class="title-accent">⚡</div>
-      <h2>Passent Portal</h2>
-    </div>
-    <div class="status-pill">大木 / Passent のSNS & サイトまとめ</div>
-
-    <!-- プロフィール -->
-    <div class="profile-row">
-      <div class="avatar-wrap">
-        <div class="avatar-inner">
-          <img src="profile.png" alt="大木 / Passent のアイコン" />
+      <!-- プロフィール -->
+      <div class="profile-row">
+        <div class="avatar-wrap">
+          <div class="avatar-inner">
+            <img src="profile.png" alt="大木 / Passent のアイコン" />
+          </div>
+        </div>
+        <div class="profile-text">
+          <p class="profile-name">大木 / Passent</p>
+          <p class="profile-sub">SimCityガチ勢・マリカガチ勢・Valoエンジョイ勢</p>
         </div>
       </div>
-      <div class="profile-text">
-        <p class="profile-name">大木 / Passent</p>
-        <p class="profile-sub">SimCityガチ勢・マリカガチ勢・Valoエンジョイ勢</p>
+
+      <!-- リンク一覧 -->
+      <div class="links" id="links">
+        <!-- Discord -->
+        <a class="link-btn discord" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
+          <div class="link-icon">
+            <img src="https://cdn.simpleicons.org/discord/000000?viewbox=auto&size=20" alt="Discord" loading="lazy" />
+          </div>
+          <div class="link-main">
+            <p class="link-title">Discord</p>
+            <p class="link-sub">@大木 / Passent</p>
+          </div>
+          <div class="link-arrow">›</div>
+        </a>
+
+        <!-- Instagram（ID: ta1boku） -->
+        <a class="link-btn instagram" href="https://www.instagram.com/ta1boku" target="_blank" rel="noopener noreferrer">
+          <div class="link-icon">
+            <img src="https://cdn.simpleicons.org/instagram/000000?viewbox=auto&size=20" alt="Instagram" loading="lazy" />
+          </div>
+          <div class="link-main">
+            <p class="link-title">Instagram</p>
+            <p class="link-sub">@ta1boku</p>
+          </div>
+          <div class="link-arrow">›</div>
+        </a>
+
+        <!-- X -->
+        <a class="link-btn x" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
+          <div class="link-icon">
+            <img src="https://cdn.simpleicons.org/x/000000?viewbox=auto&size=20" alt="X" loading="lazy" />
+          </div>
+          <div class="link-main">
+            <p class="link-title">X (旧Twitter)</p>
+            <p class="link-sub">@taiboku_passent</p>
+          </div>
+          <div class="link-arrow">›</div>
+        </a>
+
+        <!-- LINE -->
+        <a class="link-btn line" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
+          <div class="link-icon">
+            <img src="https://cdn.simpleicons.org/line/000000?viewbox=auto&size=20" alt="LINE" loading="lazy" />
+          </div>
+          <div class="link-main">
+            <p class="link-title">LINE</p>
+            <p class="link-sub">友だち追加リンク</p>
+          </div>
+          <div class="link-arrow">›</div>
+        </a>
+
+        <!-- Secret Chat Web -->
+        <a class="link-btn secret" href="https://secret-chat-tau.vercel.app/" target="_blank" rel="noopener noreferrer">
+          <div class="link-icon">
+            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
+              <path d="M7 11a4 4 0 1 1 8 0v1.3" stroke="black" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+              <rect x="5" y="11" width="14" height="8" rx="2.5" stroke="black" stroke-width="1.6" />
+              <circle cx="12" cy="15" r="1.2" fill="black" />
+            </svg>
+          </div>
+          <div class="link-main">
+            <p class="link-title">Secret Chat Web</p>
+            <p class="link-sub">P2P通話・チャットサイト</p>
+          </div>
+          <div class="link-arrow">›</div>
+        </a>
+
+        <!-- Share Fire -->
+        <a class="link-btn sharefire" href="https://file-share-gold.vercel.app/" target="_blank" rel="noopener noreferrer">
+          <div class="link-icon">
+            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
+              <path d="M12 3s-2 2-2 4.5S12 11 12 13s-1 3.5-3 3.5S6 15.5 6 13c0-2.2 1.1-3.8 2.2-4.9"
+                stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+              <path d="M14 9.5c1 .9 2 2.2 2 3.8 0 2.4-1.5 4.2-4 4.2"
+                stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+          </div>
+          <div class="link-main">
+            <p class="link-title">Share Fire</p>
+            <p class="link-sub">P2Pファイル共有サイト</p>
+          </div>
+          <div class="link-arrow">›</div>
+        </a>
       </div>
+
+      <div class="footer">taiboku_passent all right reserved</div>
     </div>
-
-    <!-- リンク一覧 -->
-    <div class="links" id="links">
-      <!-- Discord -->
-      <a class="link-btn discord" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon">
-          <img src="https://cdn.simpleicons.org/discord/ffffff?viewbox=auto&size=20" alt="Discord" loading="lazy" />
-        </div>
-        <div class="link-main">
-          <p class="link-title">Discord</p>
-          <p class="link-sub">@大木 / Passent</p>
-        </div>
-        <div class="link-arrow">›</div>
-      </a>
-
-      <!-- Instagram（ID変更：ta1boku） -->
-      <a class="link-btn instagram" href="https://www.instagram.com/ta1boku" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon">
-          <img src="https://cdn.simpleicons.org/instagram/ffffff?viewbox=auto&size=20" alt="Instagram" loading="lazy" />
-        </div>
-        <div class="link-main">
-          <p class="link-title">Instagram</p>
-          <p class="link-sub">@ta1boku</p>
-        </div>
-        <div class="link-arrow">›</div>
-      </a>
-
-      <!-- X -->
-      <a class="link-btn x" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon">
-          <img src="https://cdn.simpleicons.org/x/ffffff?viewbox=auto&size=20" alt="X" loading="lazy" />
-        </div>
-        <div class="link-main">
-          <p class="link-title">X (旧Twitter)</p>
-          <p class="link-sub">@taiboku_passent</p>
-        </div>
-        <div class="link-arrow">›</div>
-      </a>
-
-      <!-- LINE -->
-      <a class="link-btn line" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon">
-          <img src="https://cdn.simpleicons.org/line/ffffff?viewbox=auto&size=20" alt="LINE" loading="lazy" />
-        </div>
-        <div class="link-main">
-          <p class="link-title">LINE</p>
-          <p class="link-sub">友だち追加リンク</p>
-        </div>
-        <div class="link-arrow">›</div>
-      </a>
-
-      <!-- Secret Chat Web -->
-      <a class="link-btn secret" href="https://secret-chat-tau.vercel.app/" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon">
-          <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
-            <path d="M7 11a4 4 0 1 1 8 0v1.3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-            <rect x="5" y="11" width="14" height="8" rx="2.5" stroke="white" stroke-width="1.6" />
-            <circle cx="12" cy="15" r="1.2" fill="white" />
-          </svg>
-        </div>
-        <div class="link-main">
-          <p class="link-title">Secret Chat Web</p>
-          <p class="link-sub">P2P通話・チャットサイト</p>
-        </div>
-        <div class="link-arrow">›</div>
-      </a>
-
-      <!-- Share Fire -->
-      <a class="link-btn sharefire" href="https://file-share-gold.vercel.app/" target="_blank" rel="noopener noreferrer">
-        <div class="link-icon">
-          <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
-            <path d="M12 3s-2 2-2 4.5S12 11 12 13s-1 3.5-3 3.5S6 15.5 6 13c0-2.2 1.1-3.8 2.2-4.9"
-              stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            <path d="M14 9.5c1 .9 2 2.2 2 3.8 0 2.4-1.5 4.2-4 4.2"
-              stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-        </div>
-        <div class="link-main">
-          <p class="link-title">Share Fire</p>
-          <p class="link-sub">P2Pファイル共有サイト</p>
-        </div>
-        <div class="link-arrow">›</div>
-      </a>
-    </div>
-
-    <div class="footer">taiboku_passent all right reserved</div>
   </div>
 
 <script>
 /* =========================================================
-   追加アニメ大量：
-   - 背景パララックス
-   - 端スワイプで伸びる（上下）
-   - カードの3Dティルト（指/マウス追従）
-   - 外周発光がスクロールで強くなる
-   - ボタン：出現 + 浮遊 + 光の流れ + 押した場所が光る
+   - スクロールで背景が少しだけ動く（回転なし）
+   - ボタン：スクロール出現 + 押下で反射が動く
+   - “ロック画面開く”っぽいカードのティルト（指/マウス追従）
+   - 端で引っ張った時：カードが伸びる（白が見えにくい）
 ========================================================= */
 (() => {
   const root = document.documentElement;
   const card = document.getElementById("glassCard");
   const btns = [...document.querySelectorAll(".link-btn")];
 
-  // ---- ユーティリティ ----
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-  // ---- (1) 背景パララックス + 外周発光の強さ ----
+  // --- 背景パララックス ---
   const onScroll = () => {
     const y = window.scrollY || 0;
     root.style.setProperty("--scrollY", y + "px");
-
-    // スクロール量で外周ネオンを少し強化
-    const g = clamp(0.65 + (y / 1200), 0.65, 0.95);
-    root.style.setProperty("--glow", g.toFixed(3));
   };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  // ---- (2) 出現アニメ（IntersectionObserver） ----
+  // --- ボタン出現 ---
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (e.isIntersecting) e.target.classList.add("is-in");
     }
-  }, { threshold: 0.14 });
+  }, { threshold: 0.16 });
   btns.forEach(b => io.observe(b));
 
-  // ---- (3) 押した場所に波紋 ----
+  // --- 押した場所に反射 ---
   const setRipplePoint = (el, clientX, clientY) => {
     const r = el.getBoundingClientRect();
     const rx = ((clientX - r.left) / r.width) * 100;
@@ -735,12 +589,14 @@ h2{
       setRipplePoint(b, ev.clientX, ev.clientY);
       b.classList.add("is-press");
     }, { passive: true });
-    b.addEventListener("pointerup", () => b.classList.remove("is-press"), { passive: true });
-    b.addEventListener("pointercancel", () => b.classList.remove("is-press"), { passive: true });
-    b.addEventListener("pointerleave", () => b.classList.remove("is-press"), { passive: true });
+
+    const clear = () => b.classList.remove("is-press");
+    b.addEventListener("pointerup", clear, { passive: true });
+    b.addEventListener("pointercancel", clear, { passive: true });
+    b.addEventListener("pointerleave", clear, { passive: true });
   });
 
-  // ---- (4) 端で引っ張った時の“伸びるウィンドウ” ----
+  // --- 端で引っ張った時の伸び ---
   let startY = 0;
   let pulling = false;
   let currentPull = 0;
@@ -788,9 +644,8 @@ h2{
       pulling = true;
       e.preventDefault();
 
-      // 伸び量：平方根で減衰（強すぎないけど“効いてる”）
-      const softened = Math.sign(dy) * Math.sqrt(Math.abs(dy)) * 8.2;
-      setPull(clamp(softened, -140, 140));
+      const softened = Math.sign(dy) * Math.sqrt(Math.abs(dy)) * 7.6;
+      setPull(clamp(softened, -120, 120));
     }
   }, { passive: false });
 
@@ -806,38 +661,29 @@ h2{
     easeBack();
   }, { passive: true });
 
-  // ---- (5) カードの3Dティルト（指/マウスで傾く） ----
-  // 傾きは軽めに（酔うなら数値を下げる）
-  const tiltMax = 7; // deg
-  let tiltRAF = 0;
-  let targetX = 0;
-  let targetY = 0;
-  let curX = 0;
-  let curY = 0;
+  // --- カードのティルト（ロック画面開く時っぽい） ---
+  const tiltMax = 6.5; // deg（強いなら下げる）
+  let rafTilt = 0;
+  let targetX = 0, targetY = 0;
+  let curX = 0, curY = 0;
 
   const applyTilt = () => {
-    cancelAnimationFrame(tiltRAF);
+    cancelAnimationFrame(rafTilt);
     const step = () => {
-      // 追従をなめらかに
       curX += (targetX - curX) * 0.12;
       curY += (targetY - curY) * 0.12;
-
       root.style.setProperty("--tiltX", curX.toFixed(2) + "deg");
       root.style.setProperty("--tiltY", curY.toFixed(2) + "deg");
-
-      // 十分近づいたら止める
       if (Math.abs(targetX - curX) < 0.05 && Math.abs(targetY - curY) < 0.05) return;
-      tiltRAF = requestAnimationFrame(step);
+      rafTilt = requestAnimationFrame(step);
     };
-    tiltRAF = requestAnimationFrame(step);
+    rafTilt = requestAnimationFrame(step);
   };
 
   const setTiltFromPoint = (clientX, clientY) => {
     const r = card.getBoundingClientRect();
     const px = (clientX - (r.left + r.width / 2)) / (r.width / 2);
     const py = (clientY - (r.top + r.height / 2)) / (r.height / 2);
-
-    // 画面中心からのズレを傾きに
     targetY = clamp(px * tiltMax, -tiltMax, tiltMax);
     targetX = clamp(-py * tiltMax, -tiltMax, tiltMax);
     applyTilt();
@@ -845,18 +691,13 @@ h2{
 
   // pointermoveで追従（スマホでもOK）
   window.addEventListener("pointermove", (e) => {
-    // スクロール中も動くのが嫌ならここを条件で止めてOK
     setTiltFromPoint(e.clientX, e.clientY);
   }, { passive: true });
 
   // 離したら戻す
-  window.addEventListener("pointerleave", () => {
-    targetX = 0; targetY = 0; applyTilt();
-  }, { passive: true });
-
-  window.addEventListener("pointerup", () => {
-    targetX = 0; targetY = 0; applyTilt();
-  }, { passive: true });
+  const resetTilt = () => { targetX = 0; targetY = 0; applyTilt(); };
+  window.addEventListener("pointerup", resetTilt, { passive: true });
+  window.addEventListener("pointercancel", resetTilt, { passive: true });
 })();
 </script>
 </body>
