@@ -2,32 +2,22 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>Passent Glass Links</title>
+<title>リンク集</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
 <style>
 /* =========================================================
    Bright iOS-like Glass (回転オーロラ無し)
-   - スクロール/押下で気持ちよく動く
-   - “出っ張ったガラス”っぽいハイライト
-   - どんなデバイスでも中央に綺麗
+   - どんなデバイスでも「必ず中央」に見えるレイアウトへ修正
 ========================================================= */
 :root{
   --bgA:#f7fbff;
   --bgB:#eaf2ff;
-  --bgC:#f6e8ff;
-  --bgD:#e7fff6;
 
   --ink:#0b1220;
   --muted: rgba(15,23,42,0.72);
 
-  --glass: rgba(255,255,255,0.62);
-  --glass2: rgba(255,255,255,0.42);
-  --stroke: rgba(15,23,42,0.10);
-
   --shadow: 0 18px 60px rgba(2,6,23,0.18);
-  --shadow2: 0 16px 48px rgba(2,6,23,0.14);
-
   --radius: 26px;
 
   /* JSが書き換える */
@@ -37,36 +27,38 @@
   --tiltY: 0deg;
 }
 
-/* 途切れない背景 */
 html, body{
   height: 100%;
   background: #f7fbff;
   background-color: #f7fbff;
-}
-body{
   margin: 0;
-  min-height: 100vh;
-  box-sizing: border-box;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--ink);
+}
 
-  /* どんなデバイスでも中央配置 */
-  display: grid;
-  place-items: center;
+/* ✅ 中央固定：ページは“常に”中央配置（上に寄らない） */
+body{
+  min-height: 100svh; /* iOSのアドレスバー変動に強い */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  /* iPhoneのノッチ/ホームバー対策 */
   padding: calc(14px + env(safe-area-inset-top))
            calc(12px + env(safe-area-inset-right))
            calc(18px + env(safe-area-inset-bottom))
            calc(12px + env(safe-area-inset-left));
 
+  box-sizing: border-box;
   overflow-x: hidden;
+  overflow-y: auto; /* 中身が長い場合はスクロール */
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
   touch-action: pan-y;
 }
 
-/* 背景：明るめのiOSっぽいグラデ */
+/* 背景（固定、途切れにくい） */
 body::before{
   content:"";
   position: fixed;
@@ -78,12 +70,11 @@ body::before{
     radial-gradient(circle at 80% 85%, rgba(34,197,94,0.20), transparent 62%),
     radial-gradient(circle at 15% 85%, rgba(244,114,182,0.18), transparent 62%),
     linear-gradient(180deg, var(--bgA), var(--bgB));
-  filter: saturate(115%) blur(0px);
   transform: translate3d(0, calc(var(--scrollY) * -0.06), 0) scale(1.02);
   will-change: transform;
 }
 
-/* うっすら粒（回転なし、静かに漂う） */
+/* うっすら粒（回転なし） */
 body::after{
   content:"";
   position: fixed;
@@ -106,21 +97,20 @@ body::after{
   50%     { transform: translate3d(0, calc(var(--scrollY) * -0.10 - 16px), 0); }
 }
 
-/* =========================================================
-   Card: “出っ張ったガラス” + ロック画面風の厚み
-========================================================= */
+/* ✅ 中央固定の“土台” */
 .shell{
-  width: min(92vw, 480px);
-  /* どのデバイスでも切れにくい */
-  max-width: 480px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
+/* ✅ 画面幅が違っても左右が切れない幅指定 */
 .card{
+  width: min(92vw, 480px);
   border-radius: var(--radius);
   padding: 20px 18px 18px;
   box-sizing: border-box;
 
-  /* iOSっぽい明るいガラス */
   background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.50));
   border: 1px solid rgba(2,6,23,0.10);
   box-shadow: var(--shadow);
@@ -131,7 +121,6 @@ body::after{
   position: relative;
   overflow: hidden;
 
-  /* スクロール/押下で動く（控えめで高級） */
   transform:
     translate3d(0, calc(var(--pull) * 0.34), 0)
     rotateX(var(--tiltX))
@@ -142,7 +131,7 @@ body::after{
   animation: cardIn 0.55s cubic-bezier(.2,.9,.2,1);
 }
 
-/* “出っ張ったガラス”のハイライト（上側の厚み） */
+/* “出っ張ったガラス”のハイライト */
 .card::before{
   content:"";
   position: absolute;
@@ -158,8 +147,6 @@ body::after{
   opacity: 0.75;
   pointer-events: none;
 }
-
-/* 外周の“ガラス縁” */
 .card::after{
   content:"";
   position: absolute;
@@ -171,7 +158,6 @@ body::after{
     0 -1px 0 rgba(2,6,23,0.06) inset;
 }
 
-/* ふわっと浮く（ロック画面開く感じ） */
 @keyframes cardIn{
   from{ opacity: 0; transform: translateY(14px) scale(0.985); }
   to  { opacity: 1; transform: translateY(0) scale(1); }
@@ -181,9 +167,7 @@ body::after{
   body::after, .card{ animation: none !important; }
 }
 
-/* =========================================================
-   Header
-========================================================= */
+/* Header */
 .title-row{
   display: flex;
   align-items: center;
@@ -206,7 +190,7 @@ body::after{
 h2{
   margin: 0;
   text-align: center;
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: 0.01em;
   color: #0b1220;
 }
@@ -225,16 +209,13 @@ h2{
     0 10px 22px rgba(2,6,23,0.06);
 }
 
-/* =========================================================
-   Profile
-========================================================= */
+/* Profile */
 .profile-row{
   display: flex;
   align-items: center;
   gap: 12px;
   margin: 8px 0 14px;
 }
-
 .avatar-wrap{
   width: 60px;
   height: 60px;
@@ -242,7 +223,6 @@ h2{
   padding: 2px;
   background: linear-gradient(135deg, rgba(56,189,248,1), rgba(167,139,250,1), rgba(244,114,182,1));
   box-shadow: 0 18px 38px rgba(2,6,23,0.16);
-  position: relative;
   overflow: hidden;
 }
 .avatar-inner{
@@ -262,7 +242,7 @@ h2{
 .profile-name{
   margin: 0 0 2px;
   font-size: 16px;
-  font-weight: 850;
+  font-weight: 900;
   color: #0b1220;
 }
 .profile-sub{
@@ -271,11 +251,7 @@ h2{
   color: rgba(15,23,42,0.72);
 }
 
-/* =========================================================
-   Links: “最近のかっこいいサイト”の挙動
-   - 押下で沈み/反射が動く
-   - スクロールで順に出現
-========================================================= */
+/* Links */
 .links{
   display: flex;
   flex-direction: column;
@@ -283,7 +259,6 @@ h2{
   margin-top: 6px;
 }
 
-/* ボタン */
 .link-btn{
   display: flex;
   align-items: center;
@@ -294,7 +269,6 @@ h2{
   text-decoration: none;
   color: #0b1220;
 
-  /* ガラスボタン */
   background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.50));
   border: 1px solid rgba(2,6,23,0.10);
   box-shadow:
@@ -307,7 +281,6 @@ h2{
   backdrop-filter: blur(14px) saturate(140%);
   -webkit-backdrop-filter: blur(14px) saturate(140%);
 
-  /* スクロール出現 */
   opacity: 0;
   transform: translateY(12px) scale(0.99);
   transition:
@@ -317,14 +290,10 @@ h2{
     border-color 0.18s ease,
     filter 0.18s ease;
 }
-
-/* 出現後 */
 .link-btn.is-in{
   opacity: 1;
   transform: translateY(0) scale(1);
 }
-
-/* 押した時の反射が“走る” */
 .link-btn::before{
   content:"";
   position: absolute;
@@ -342,8 +311,6 @@ h2{
   opacity: 0.75;
   transform: scale(1.15);
 }
-
-/* “スッ”と沈む（最近のUIっぽい） */
 .link-btn:active{
   transform: translateY(1px) scale(0.995);
   box-shadow:
@@ -351,7 +318,6 @@ h2{
     0 10px 22px rgba(2,6,23,0.10);
 }
 
-/* ホバー（PC） */
 @media (hover:hover){
   .link-btn:hover{
     filter: brightness(1.03);
@@ -363,7 +329,6 @@ h2{
   }
 }
 
-/* 左アイコン */
 .link-icon{
   width: 34px;
   height: 34px;
@@ -378,12 +343,8 @@ h2{
   flex-shrink: 0;
 }
 .link-icon img,
-.link-icon svg{
-  width: 18px;
-  height: 18px;
-}
+.link-icon svg{ width: 18px; height: 18px; }
 
-/* テキスト */
 .link-main{ flex: 1; min-width: 0; }
 .link-title{
   font-size: 13px;
@@ -396,7 +357,6 @@ h2{
   margin: 1px 0 0;
   color: rgba(15,23,42,0.70);
 }
-
 .link-arrow{
   font-size: 18px;
   opacity: 0.55;
@@ -410,7 +370,7 @@ h2{
   }
 }
 
-/* サービスごとの“さりげない”色 */
+/* サービス別ボーダー色 */
 .link-btn.discord{ border-color: rgba(88,101,242,0.22); }
 .link-btn.instagram{ border-color: rgba(244,114,182,0.22); }
 .link-btn.x{ border-color: rgba(15,23,42,0.18); }
@@ -426,7 +386,7 @@ h2{
   letter-spacing: 0.04em;
 }
 
-/* 極小端末でも切れにくく */
+/* 小さい端末 */
 @media (max-width: 360px){
   .card{ padding: 18px 14px 16px; }
   .profile-sub{ font-size: 11px; }
@@ -437,14 +397,12 @@ h2{
 <body>
   <div class="shell">
     <div class="card" id="glassCard">
-      <!-- タイトル -->
       <div class="title-row">
         <div class="title-accent">🔗</div>
-        <h2>Passent Glass Links</h2>
+        <h2>リンク集</h2>
       </div>
       <div class="status-pill">大木 / Passent のSNS & サイトまとめ</div>
 
-      <!-- プロフィール -->
       <div class="profile-row">
         <div class="avatar-wrap">
           <div class="avatar-inner">
@@ -457,9 +415,7 @@ h2{
         </div>
       </div>
 
-      <!-- リンク一覧 -->
       <div class="links" id="links">
-        <!-- Discord -->
         <a class="link-btn discord" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
           <div class="link-icon">
             <img src="https://cdn.simpleicons.org/discord/000000?viewbox=auto&size=20" alt="Discord" loading="lazy" />
@@ -471,19 +427,18 @@ h2{
           <div class="link-arrow">›</div>
         </a>
 
-        <!-- Instagram（ID: ta1boku） -->
-        <a class="link-btn instagram" href="https://www.instagram.com/ta1boku" target="_blank" rel="noopener noreferrer">
+        <!-- ✅ Instagram ID: ta1boku_ -->
+        <a class="link-btn instagram" href="https://www.instagram.com/ta1boku_" target="_blank" rel="noopener noreferrer">
           <div class="link-icon">
             <img src="https://cdn.simpleicons.org/instagram/000000?viewbox=auto&size=20" alt="Instagram" loading="lazy" />
           </div>
           <div class="link-main">
             <p class="link-title">Instagram</p>
-            <p class="link-sub">@ta1boku</p>
+            <p class="link-sub">@ta1boku_</p>
           </div>
           <div class="link-arrow">›</div>
         </a>
 
-        <!-- X -->
         <a class="link-btn x" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
           <div class="link-icon">
             <img src="https://cdn.simpleicons.org/x/000000?viewbox=auto&size=20" alt="X" loading="lazy" />
@@ -495,7 +450,6 @@ h2{
           <div class="link-arrow">›</div>
         </a>
 
-        <!-- LINE -->
         <a class="link-btn line" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
           <div class="link-icon">
             <img src="https://cdn.simpleicons.org/line/000000?viewbox=auto&size=20" alt="LINE" loading="lazy" />
@@ -507,7 +461,6 @@ h2{
           <div class="link-arrow">›</div>
         </a>
 
-        <!-- Secret Chat Web -->
         <a class="link-btn secret" href="https://secret-chat-tau.vercel.app/" target="_blank" rel="noopener noreferrer">
           <div class="link-icon">
             <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
@@ -523,7 +476,6 @@ h2{
           <div class="link-arrow">›</div>
         </a>
 
-        <!-- Share Fire -->
         <a class="link-btn sharefire" href="https://file-share-gold.vercel.app/" target="_blank" rel="noopener noreferrer">
           <div class="link-icon">
             <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
@@ -546,12 +498,6 @@ h2{
   </div>
 
 <script>
-/* =========================================================
-   - スクロールで背景が少しだけ動く（回転なし）
-   - ボタン：スクロール出現 + 押下で反射が動く
-   - “ロック画面開く”っぽいカードのティルト（指/マウス追従）
-   - 端で引っ張った時：カードが伸びる（白が見えにくい）
-========================================================= */
 (() => {
   const root = document.documentElement;
   const card = document.getElementById("glassCard");
@@ -559,7 +505,7 @@ h2{
 
   const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
 
-  // --- 背景パララックス ---
+  // 背景パララックス
   const onScroll = () => {
     const y = window.scrollY || 0;
     root.style.setProperty("--scrollY", y + "px");
@@ -567,7 +513,7 @@ h2{
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  // --- ボタン出現 ---
+  // ボタン出現
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (e.isIntersecting) e.target.classList.add("is-in");
@@ -575,7 +521,7 @@ h2{
   }, { threshold: 0.16 });
   btns.forEach(b => io.observe(b));
 
-  // --- 押した場所に反射 ---
+  // 押した場所に反射
   const setRipplePoint = (el, clientX, clientY) => {
     const r = el.getBoundingClientRect();
     const rx = ((clientX - r.left) / r.width) * 100;
@@ -596,7 +542,7 @@ h2{
     b.addEventListener("pointerleave", clear, { passive: true });
   });
 
-  // --- 端で引っ張った時の伸び ---
+  // 端で引っ張った時の伸び
   let startY = 0;
   let pulling = false;
   let currentPull = 0;
@@ -661,8 +607,8 @@ h2{
     easeBack();
   }, { passive: true });
 
-  // --- カードのティルト（ロック画面開く時っぽい） ---
-  const tiltMax = 6.5; // deg（強いなら下げる）
+  // カードのティルト
+  const tiltMax = 6.5;
   let rafTilt = 0;
   let targetX = 0, targetY = 0;
   let curX = 0, curY = 0;
@@ -689,12 +635,10 @@ h2{
     applyTilt();
   };
 
-  // pointermoveで追従（スマホでもOK）
   window.addEventListener("pointermove", (e) => {
     setTiltFromPoint(e.clientX, e.clientY);
   }, { passive: true });
 
-  // 離したら戻す
   const resetTilt = () => { targetX = 0; targetY = 0; applyTilt(); };
   window.addEventListener("pointerup", resetTilt, { passive: true });
   window.addEventListener("pointercancel", resetTilt, { passive: true });
