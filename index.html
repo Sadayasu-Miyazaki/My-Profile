@@ -2,138 +2,177 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8" />
-<title>大木 / Passent - Links</title>
+<title>大木 / Passent - Portal</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
 <style>
 /* =========================================================
-   最高に途切れない背景 + 透明ガラスUI + スワイプ(引っ張り)アニメ
+   Neon Glass Portal (色合い変更 + ガンガン動く)
 ========================================================= */
 :root{
-  --bg1:#f8cdda;
-  --bg2:#1d2b64;
-  --bg3:#141e30;
+  /* ここが全体の色味（ネオン寄り） */
+  --bg0:#050612;
+  --bg1:#6d28d9;   /* purple */
+  --bg2:#06b6d4;   /* cyan */
+  --bg3:#f97316;   /* orange */
+  --bg4:#22c55e;   /* green */
+  --bg5:#f43f5e;   /* rose */
 
-  --glass: rgba(255,255,255,0.10);
-  --glass2: rgba(255,255,255,0.06);
+  --text:#f8fafc;
+  --muted: rgba(226,232,240,0.88);
+
+  --glassA: rgba(255,255,255,0.10);
+  --glassB: rgba(255,255,255,0.06);
   --stroke: rgba(255,255,255,0.18);
 
-  --text: #f9fafb;
-  --muted: rgba(226,232,240,0.9);
-
-  --shadow: 0 18px 40px rgba(0,0,0,0.45);
-  --shadow2: 0 14px 35px rgba(0,0,0,0.55);
-
-  --radius: 22px;
+  --shadow1: 0 18px 45px rgba(0,0,0,0.55);
+  --shadow2: 0 18px 55px rgba(0,0,0,0.65);
 
   /* JSが書き換える */
-  --pull: 0px;       /* 引っ張り量 */
-  --scrollY: 0px;    /* スクロール量 */
+  --pull: 0px;
+  --scrollY: 0px;
+  --tiltX: 0deg;   /* カード傾き */
+  --tiltY: 0deg;
+  --glow: 0.75;    /* 外周発光の強さ */
 }
 
-/* 途切れない背景のためにhtml/body両方を塗る */
 html, body{
   height: 100%;
-  background: radial-gradient(circle at 10% 20%, var(--bg1) 0, var(--bg2) 60%, var(--bg3) 100%);
-  background-color: #0b1020; /* 白のチラ見え対策 */
+  background: var(--bg0);
+  background-color: var(--bg0);
 }
 
 body{
   margin: 0;
   min-height: 100vh;
-  padding: 12px 10px 20px;
+  padding: 14px 10px 22px;
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   color: var(--text);
   overflow-x: hidden;
 
-  /* Android/Chromiumの“余計な跳ね返り”を抑える */
   overscroll-behavior-y: none;
   -webkit-overflow-scrolling: touch;
-
-  /* iOSで下の白が見えるのを抑えやすくする */
-  background-color: #0b1020;
   touch-action: pan-y;
 }
 
-/* 背景を固定レイヤー化（引っ張っても途切れない） */
+/* 背景：途切れない固定レイヤー + ぐるぐる動くネオン */
 body::before{
   content:"";
   position: fixed;
-  inset: -30vh -30vw; /* 引っ張り/ズームでも端が見えないように広め */
-  z-index: -3;
+  inset: -35vh -35vw;
+  z-index: -4;
   background:
-    radial-gradient(circle at 10% 20%, var(--bg1) 0, var(--bg2) 60%, var(--bg3) 100%);
-  transform: translate3d(0, calc(var(--scrollY) * -0.08), 0) scale(1.02);
+    radial-gradient(circle at 10% 20%, rgba(109,40,217,0.35), transparent 52%),
+    radial-gradient(circle at 80% 10%, rgba(6,182,212,0.28), transparent 50%),
+    radial-gradient(circle at 80% 85%, rgba(249,115,22,0.22), transparent 55%),
+    radial-gradient(circle at 20% 85%, rgba(34,197,94,0.18), transparent 58%),
+    radial-gradient(circle at 50% 50%, rgba(244,63,94,0.14), transparent 60%),
+    radial-gradient(circle at 50% 50%, rgba(255,255,255,0.05), transparent 65%);
+  filter: blur(22px) saturate(135%);
+  transform: translate3d(0, calc(var(--scrollY) * -0.10), 0) scale(1.05);
   will-change: transform;
 }
 
-/* うっすらオーロラ/光の漂い（超かっこいい系） */
+/* 動くオーロラ膜 */
 body::after{
   content:"";
   position: fixed;
-  inset: -25vh -25vw;
-  z-index: -2;
+  inset: -40vh -40vw;
+  z-index: -3;
   background:
-    radial-gradient(closest-side at 20% 30%, rgba(255,154,158,0.35), transparent 55%),
-    radial-gradient(closest-side at 80% 20%, rgba(166,193,238,0.30), transparent 58%),
-    radial-gradient(closest-side at 65% 85%, rgba(56,189,248,0.22), transparent 60%),
-    radial-gradient(closest-side at 25% 85%, rgba(244,114,182,0.18), transparent 60%);
-  filter: blur(30px);
-  transform: translate3d(0, calc(var(--scrollY) * -0.14), 0);
-  opacity: 0.95;
+    conic-gradient(from 120deg,
+      rgba(109,40,217,0.35),
+      rgba(6,182,212,0.28),
+      rgba(249,115,22,0.22),
+      rgba(34,197,94,0.18),
+      rgba(244,63,94,0.22),
+      rgba(109,40,217,0.35)
+    );
+  filter: blur(50px) saturate(150%);
+  opacity: 0.55;
+  transform: translate3d(0, calc(var(--scrollY) * -0.14), 0) rotate(0deg);
   will-change: transform;
+  animation: auroraSpin 14s linear infinite;
 }
 
-/* ─────────── PC時だけ中央寄せ ─────────── */
+@keyframes auroraSpin{
+  from { transform: translate3d(0, calc(var(--scrollY) * -0.14), 0) rotate(0deg); }
+  to   { transform: translate3d(0, calc(var(--scrollY) * -0.14), 0) rotate(360deg); }
+}
+
+/* 小さい粒子の流れ（軽め） */
+.particles{
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  opacity: 0.35;
+  background:
+    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.8), transparent 60%),
+    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.65), transparent 60%),
+    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.55), transparent 60%),
+    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.55), transparent 60%);
+  animation: particlesDrift 9s ease-in-out infinite;
+  filter: blur(0.2px);
+}
+
+@keyframes particlesDrift{
+  0%,100% { transform: translate3d(0,0,0); }
+  50%     { transform: translate3d(0, -18px, 0); }
+}
+
+/* PC時だけ中央寄せ */
 @media (min-width: 768px) {
   body{
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: 16px;
+    padding: 18px;
   }
 }
 
 /* =========================================================
-   カード（透明ガラスウィンドウ）＋ 引っ張りで伸びる演出
+   Card: Neon Glass Window + 3D Tilt + 伸びる
 ========================================================= */
 .card{
   width: 100%;
-  max-width: 460px;
-  border-radius: var(--radius);
+  max-width: 470px;
+  border-radius: 24px;
   padding: 20px 18px 18px;
   box-sizing: border-box;
   margin: 10px auto;
 
-  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
-  border: 1px solid rgba(255,255,255,0.18);
-  box-shadow: var(--shadow);
-  backdrop-filter: blur(28px) saturate(140%);
-  -webkit-backdrop-filter: blur(28px) saturate(140%);
+  background: linear-gradient(180deg, rgba(255,255,255,0.11), rgba(255,255,255,0.04));
+  border: 1px solid rgba(255,255,255,0.16);
+  box-shadow: var(--shadow1);
+  backdrop-filter: blur(30px) saturate(150%);
+  -webkit-backdrop-filter: blur(30px) saturate(150%);
 
   display: flex;
   flex-direction: column;
+  position: relative;
+  overflow: hidden;
 
-  /* 引っ張りで“ウィンドウが伸びる” */
   transform:
-    translate3d(0, calc(var(--pull) * 0.35), 0)
+    translate3d(0, calc(var(--pull) * 0.36), 0)
+    rotateX(var(--tiltX))
+    rotateY(var(--tiltY))
     scale3d(1, calc(1 + (abs(var(--pull)) / 900)), 1);
   transform-origin: center;
   will-change: transform;
 
-  /* 登場アニメ */
-  animation: popIn 0.55s cubic-bezier(.2,.9,.2,1);
-  position: relative;
-  overflow: hidden;
+  animation: popIn 0.65s cubic-bezier(.2,.95,.2,1);
 }
 
-/* ガラスの“光のスイープ” */
+/* 走る光のスイープ */
 .card::before{
   content:"";
   position: absolute;
-  inset: -40% -60%;
+  inset: -55% -80%;
   background: linear-gradient(
     110deg,
     transparent 35%,
@@ -141,36 +180,43 @@ body::after{
     rgba(255,255,255,0.08) 55%,
     transparent 65%
   );
-  transform: translateX(-20%) rotate(8deg);
+  transform: translateX(-30%) rotate(10deg);
   opacity: 0.8;
   pointer-events: none;
-  animation: shine 6s ease-in-out infinite;
+  animation: shine 4.4s ease-in-out infinite;
 }
 
-/* ふわっとした外側グロー */
+/* 外周ネオン */
 .card::after{
   content:"";
   position: absolute;
   inset: -2px;
-  border-radius: calc(var(--radius) + 2px);
+  border-radius: 26px;
   padding: 2px;
   background: conic-gradient(
-    from 220deg,
-    rgba(255,154,158,0.65),
-    rgba(250,208,196,0.35),
-    rgba(251,194,235,0.45),
-    rgba(166,193,238,0.55),
-    rgba(56,189,248,0.40),
-    rgba(255,154,158,0.65)
+    from 210deg,
+    rgba(109,40,217,0.85),
+    rgba(6,182,212,0.70),
+    rgba(249,115,22,0.65),
+    rgba(34,197,94,0.60),
+    rgba(244,63,94,0.68),
+    rgba(109,40,217,0.85)
   );
   -webkit-mask:
     linear-gradient(#000 0 0) content-box,
     linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: 0.55;
-  filter: blur(0.1px);
+
+  opacity: var(--glow);
+  filter: blur(0.2px);
   pointer-events: none;
+  animation: borderSpin 8.5s linear infinite;
+}
+
+@keyframes borderSpin{
+  from{ transform: rotate(0deg); }
+  to  { transform: rotate(360deg); }
 }
 
 @keyframes popIn{
@@ -178,86 +224,117 @@ body::after{
   to  { opacity: 1; transform: translateY(0) scale(1); }
 }
 @keyframes shine{
-  0%,100%{ transform: translateX(-25%) rotate(8deg); opacity: 0.55; }
-  50%    { transform: translateX(20%)  rotate(8deg); opacity: 0.85; }
+  0%,100%{ transform: translateX(-35%) rotate(10deg); opacity: 0.55; }
+  50%    { transform: translateX(35%)  rotate(10deg); opacity: 0.88; }
 }
 
-/* motion弱め設定 */
 @media (prefers-reduced-motion: reduce){
-  .card{ animation: none; }
-  .card::before{ animation: none; }
+  body::after, .particles, .card, .card::before, .card::after{ animation: none !important; }
 }
 
 /* =========================================================
-   タイトル部分
+   Header
 ========================================================= */
 .title-row{
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  margin-bottom: 8px;
+  gap: 9px;
+  margin-bottom: 10px;
 }
+
 .title-accent{
-  width: 28px;
-  height: 28px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
-  background: conic-gradient(from 200deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee, #38bdf8, #ff9a9e);
+  background: conic-gradient(from 200deg,
+    rgba(109,40,217,1),
+    rgba(6,182,212,1),
+    rgba(249,115,22,1),
+    rgba(34,197,94,1),
+    rgba(244,63,94,1),
+    rgba(109,40,217,1)
+  );
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-size: 14px;
-  box-shadow: 0 10px 24px rgba(0,0,0,0.55);
-  border: 1px solid rgba(255,255,255,0.25);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.6);
+  border: 1px solid rgba(255,255,255,0.22);
+  animation: iconPulse 2.2s ease-in-out infinite;
 }
+
+@keyframes iconPulse{
+  0%,100%{ transform: scale(1); filter: brightness(1); }
+  50%    { transform: scale(1.06); filter: brightness(1.25); }
+}
+
 h2{
   margin: 0;
   text-align: center;
-  font-weight: 650;
-  letter-spacing: 0.03em;
+  font-weight: 780;
+  letter-spacing: 0.02em;
+  text-shadow: 0 10px 30px rgba(0,0,0,0.55);
 }
 
 .status-pill{
   align-self: center;
-  margin: 6px 0 12px;
+  margin: 6px 0 14px;
   padding: 7px 12px;
   border-radius: 999px;
   font-size: 12px;
-  color: rgba(235,245,255,0.95);
-  background: rgba(15,118,255,0.14);
-  border: 1px solid rgba(144,202,249,0.35);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.25) inset;
+  color: rgba(240,249,255,0.95);
+  background: rgba(6,182,212,0.14);
+  border: 1px solid rgba(6,182,212,0.30);
+  box-shadow: 0 12px 28px rgba(0,0,0,0.22) inset;
+  animation: pillFloat 3.6s ease-in-out infinite;
+}
+
+@keyframes pillFloat{
+  0%,100%{ transform: translateY(0); }
+  50%    { transform: translateY(-3px); }
 }
 
 /* =========================================================
-   プロフィール
+   Profile
 ========================================================= */
 .profile-row{
   display: flex;
   align-items: center;
   gap: 12px;
-  margin: 8px 0 14px;
+  margin: 10px 0 14px;
 }
 
 .avatar-wrap{
-  width: 58px;
-  height: 58px;
+  width: 60px;
+  height: 60px;
   border-radius: 18px;
   padding: 2px;
-  background: linear-gradient(135deg, rgba(255,154,158,0.95), rgba(166,193,238,0.9));
-  box-shadow: 0 14px 32px rgba(0,0,0,0.6);
-  box-sizing: border-box;
+  background: conic-gradient(from 250deg,
+    rgba(109,40,217,0.95),
+    rgba(6,182,212,0.85),
+    rgba(249,115,22,0.75),
+    rgba(34,197,94,0.70),
+    rgba(244,63,94,0.80),
+    rgba(109,40,217,0.95)
+  );
+  box-shadow: 0 18px 40px rgba(0,0,0,0.65);
   position: relative;
   overflow: hidden;
+  animation: avatarGlow 3.2s ease-in-out infinite;
 }
 
-/* 角に微光 */
+@keyframes avatarGlow{
+  0%,100%{ filter: brightness(1) saturate(1.1); }
+  50%    { filter: brightness(1.18) saturate(1.4); }
+}
+
 .avatar-wrap::after{
   content:"";
   position: absolute;
-  inset: -20%;
-  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.35), transparent 55%);
+  inset: -30%;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.33), transparent 55%);
   transform: rotate(18deg);
   pointer-events: none;
 }
@@ -267,20 +344,21 @@ h2{
   height: 100%;
   border-radius: 16px;
   overflow: hidden;
-  background: radial-gradient(circle at 20% 0, #1f2937, #020617);
+  background: radial-gradient(circle at 20% 0, #0b1226, #020617);
   border: 1px solid rgba(255,255,255,0.12);
 }
 .avatar-inner img{
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transform: scale(1.05);
 }
 
 .profile-text{ flex: 1; min-width: 0; }
 .profile-name{
   margin: 0 0 2px;
   font-size: 16px;
-  font-weight: 650;
+  font-weight: 800;
   color: var(--text);
 }
 .profile-sub{
@@ -290,95 +368,139 @@ h2{
 }
 
 /* =========================================================
-   リンクリスト（スワイプ/スクロールで“動いて見える”）
+   Links
 ========================================================= */
 .links{
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
   margin-top: 6px;
 }
 
-/* ボタン風リンク */
+/* ボタン */
 .link-btn{
   display: flex;
   align-items: center;
   gap: 10px;
   width: 100%;
-  padding: 10px 11px;
-  border-radius: 14px;
+  padding: 10px 12px;
+  border-radius: 15px;
   text-decoration: none;
   color: #e5e7eb;
 
-  background: linear-gradient(135deg, rgba(15,23,42,0.86), rgba(30,64,175,0.68));
-  border: 1px solid rgba(148,163,184,0.55);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.45);
-  box-sizing: border-box;
-
+  border: 1px solid rgba(255,255,255,0.14);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.48);
   position: relative;
   overflow: hidden;
-
-  /* “ガラスっぽい反射” */
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 
-  /* スクロール出現アニメ用（JSでon） */
   opacity: 0;
-  transform: translateY(10px) scale(0.99);
+  transform: translateY(14px) scale(0.985);
   transition:
     transform 0.18s ease,
     box-shadow 0.18s ease,
     filter 0.18s ease,
     border-color 0.18s ease,
-    opacity 0.35s ease;
+    opacity 0.55s ease;
 }
+
+/* 出現 */
 .link-btn.is-in{
   opacity: 1;
   transform: translateY(0) scale(1);
 }
 
-.link-btn:hover{
-  filter: brightness(1.05);
-  transform: translateY(-1px);
-  box-shadow: 0 16px 30px rgba(0,0,0,0.55);
-  border-color: rgba(226,232,240,0.85);
+/* 常に“ふわふわ” */
+.link-btn.is-in{
+  animation: btnFloat 3.6s ease-in-out infinite;
 }
-.link-btn:active{
-  transform: translateY(0);
-  box-shadow: 0 10px 22px rgba(0,0,0,0.45);
+.link-btn.is-in:nth-child(2){ animation-delay: .15s; }
+.link-btn.is-in:nth-child(3){ animation-delay: .30s; }
+.link-btn.is-in:nth-child(4){ animation-delay: .45s; }
+.link-btn.is-in:nth-child(5){ animation-delay: .60s; }
+.link-btn.is-in:nth-child(6){ animation-delay: .75s; }
+
+@keyframes btnFloat{
+  0%,100%{ transform: translateY(0) scale(1); }
+  50%    { transform: translateY(-4px) scale(1.01); }
 }
 
-/* タップ時の“波紋/スワイプ感” */
+/* ホバー */
+.link-btn:hover{
+  filter: brightness(1.08);
+  transform: translateY(-2px) scale(1.01);
+  box-shadow: 0 20px 45px rgba(0,0,0,0.58);
+  border-color: rgba(255,255,255,0.22);
+}
+.link-btn:active{
+  transform: translateY(0) scale(1.0);
+  box-shadow: 0 14px 30px rgba(0,0,0,0.48);
+}
+
+/* 光の流れ（ボタン内） */
+.link-btn::after{
+  content:"";
+  position: absolute;
+  inset: -60% -70%;
+  background: linear-gradient(110deg,
+    transparent 35%,
+    rgba(255,255,255,0.16) 45%,
+    rgba(255,255,255,0.06) 55%,
+    transparent 65%
+  );
+  transform: translateX(-35%) rotate(10deg);
+  opacity: 0.0;
+  pointer-events: none;
+}
+.link-btn.is-in::after{
+  opacity: 0.55;
+  animation: btnShine 5.6s ease-in-out infinite;
+}
+@keyframes btnShine{
+  0%,100%{ transform: translateX(-35%) rotate(10deg); opacity: 0.30; }
+  50%    { transform: translateX(35%)  rotate(10deg); opacity: 0.65; }
+}
+
+/* 押した場所に波紋 */
 .link-btn::before{
   content:"";
   position: absolute;
   inset: -60%;
   background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%),
-    rgba(255,255,255,0.22),
-    transparent 55%);
+    rgba(255,255,255,0.24),
+    transparent 58%);
   opacity: 0;
-  transform: scale(0.8);
+  transform: scale(0.82);
   transition: opacity 0.25s ease, transform 0.25s ease;
   pointer-events: none;
 }
 .link-btn.is-press::before{
   opacity: 1;
-  transform: scale(1.15);
+  transform: scale(1.18);
 }
 
-/* 左の丸アイコン */
+/* 左アイコン */
 .link-icon{
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 999px;
-  background: rgba(15,23,42,0.86);
+  background: rgba(2,6,23,0.60);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 10px 18px rgba(0,0,0,0.45);
-  border: 1px solid rgba(148,163,184,0.55);
+  box-shadow: 0 14px 25px rgba(0,0,0,0.5);
+  border: 1px solid rgba(255,255,255,0.14);
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
+}
+.link-icon::after{
+  content:"";
+  position: absolute;
+  inset: -40%;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.18), transparent 55%);
+  pointer-events: none;
 }
 .link-icon img,
 .link-icon svg{
@@ -390,7 +512,7 @@ h2{
 .link-main{ flex: 1; min-width: 0; }
 .link-title{
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 800;
   margin: 0;
   color: #f1f5f9;
   letter-spacing: 0.01em;
@@ -401,54 +523,64 @@ h2{
   color: rgba(209,213,219,0.92);
 }
 
-/* 右側の矢印 */
+/* 右矢印 */
 .link-arrow{
   font-size: 18px;
-  opacity: 0.75;
+  opacity: 0.78;
   transform: translateX(0);
   transition: transform 0.18s ease, opacity 0.18s ease;
 }
 .link-btn:hover .link-arrow{
-  transform: translateX(2px);
-  opacity: 0.95;
+  transform: translateX(3px);
+  opacity: 1;
 }
 
-/* 色違い */
+/* サービス色（よりネオン） */
 .link-btn.discord{
-  background: linear-gradient(135deg, rgba(37, 35, 88, 0.92), rgba(88, 101, 242, 0.80));
+  background: linear-gradient(135deg, rgba(88,101,242,0.45), rgba(109,40,217,0.34));
 }
 .link-btn.instagram{
-  background: linear-gradient(135deg, rgba(88, 28, 135, 0.92), rgba(244, 114, 182, 0.78));
+  background: linear-gradient(135deg, rgba(244,114,182,0.42), rgba(109,40,217,0.32));
 }
 .link-btn.x{
-  background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(55,65,81,0.82));
+  background: linear-gradient(135deg, rgba(148,163,184,0.20), rgba(15,23,42,0.58));
 }
 .link-btn.line{
-  background: linear-gradient(135deg, rgba(4,120,87,0.92), rgba(16,185,129,0.80));
+  background: linear-gradient(135deg, rgba(16,185,129,0.40), rgba(6,182,212,0.26));
 }
 .link-btn.secret{
-  background: linear-gradient(135deg, rgba(30,64,175,0.92), rgba(56,189,248,0.78));
+  background: linear-gradient(135deg, rgba(56,189,248,0.42), rgba(109,40,217,0.30));
 }
 .link-btn.sharefire{
-  background: linear-gradient(135deg, rgba(185, 28, 28, 0.92), rgba(249, 115, 22, 0.80));
+  background: linear-gradient(135deg, rgba(249,115,22,0.42), rgba(244,63,94,0.26));
 }
 
 .footer{
-  margin-top: 10px;
+  margin-top: 12px;
   text-align: center;
   font-size: 11px;
-  color: rgba(241,245,249,0.7);
+  color: rgba(241,245,249,0.65);
   letter-spacing: 0.04em;
+  opacity: 0.95;
 }
+
+/* 端末で負荷が強い時の保険（無効にしたいなら削除OK） */
+@media (max-width: 360px){
+  .card::after{ opacity: 0.6; }
+}
+
+/* “abs()”未対応対策（古い環境）：下のJSで補助してるのでOK */
 </style>
 </head>
 
 <body>
+  <div class="particles"></div>
+
   <div class="card" id="glassCard">
     <!-- タイトル -->
     <div class="title-row">
-      <div class="title-accent">🔗</div>
-      <h2>P2P Style Links</h2>
+      <div class="title-accent">⚡</div>
+      <h2>Passent Portal</h2>
     </div>
     <div class="status-pill">大木 / Passent のSNS & サイトまとめ</div>
 
@@ -479,14 +611,14 @@ h2{
         <div class="link-arrow">›</div>
       </a>
 
-      <!-- Instagram -->
-      <a class="link-btn instagram" href="https://www.instagram.com/ta1boku_astler" target="_blank" rel="noopener noreferrer">
+      <!-- Instagram（ID変更：ta1boku） -->
+      <a class="link-btn instagram" href="https://www.instagram.com/ta1boku" target="_blank" rel="noopener noreferrer">
         <div class="link-icon">
           <img src="https://cdn.simpleicons.org/instagram/ffffff?viewbox=auto&size=20" alt="Instagram" loading="lazy" />
         </div>
         <div class="link-main">
           <p class="link-title">Instagram</p>
-          <p class="link-sub">@ta1boku_astler</p>
+          <p class="link-sub">@ta1boku</p>
         </div>
         <div class="link-arrow">›</div>
       </a>
@@ -554,34 +686,42 @@ h2{
 
 <script>
 /* =========================================================
-   1) 背景パララックス（スクロールで“動く”）
-   2) ボタンの波紋（スワイプ/タップ感）
-   3) 端で引っ張っても白が見えにくい + ウィンドウが伸びる
+   追加アニメ大量：
+   - 背景パララックス
+   - 端スワイプで伸びる（上下）
+   - カードの3Dティルト（指/マウス追従）
+   - 外周発光がスクロールで強くなる
+   - ボタン：出現 + 浮遊 + 光の流れ + 押した場所が光る
 ========================================================= */
 (() => {
   const root = document.documentElement;
   const card = document.getElementById("glassCard");
+  const btns = [...document.querySelectorAll(".link-btn")];
 
-  // ---- (1) 背景パララックス ----
+  // ---- ユーティリティ ----
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+  // ---- (1) 背景パララックス + 外周発光の強さ ----
   const onScroll = () => {
     const y = window.scrollY || 0;
     root.style.setProperty("--scrollY", y + "px");
+
+    // スクロール量で外周ネオンを少し強化
+    const g = clamp(0.65 + (y / 1200), 0.65, 0.95);
+    root.style.setProperty("--glow", g.toFixed(3));
   };
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  // ---- (2) リンクの波紋（押した場所に光） + 出現アニメ ----
-  const btns = [...document.querySelectorAll(".link-btn")];
-
-  // 出現（スクロール）アニメ
+  // ---- (2) 出現アニメ（IntersectionObserver） ----
   const io = new IntersectionObserver((entries) => {
     for (const e of entries) {
       if (e.isIntersecting) e.target.classList.add("is-in");
     }
-  }, { threshold: 0.15 });
+  }, { threshold: 0.14 });
   btns.forEach(b => io.observe(b));
 
-  // 押した場所の座標で光る
+  // ---- (3) 押した場所に波紋 ----
   const setRipplePoint = (el, clientX, clientY) => {
     const r = el.getBoundingClientRect();
     const rx = ((clientX - r.left) / r.width) * 100;
@@ -591,23 +731,20 @@ h2{
   };
 
   btns.forEach((b) => {
-    // マウス
     b.addEventListener("pointerdown", (ev) => {
       setRipplePoint(b, ev.clientX, ev.clientY);
       b.classList.add("is-press");
-    });
-    b.addEventListener("pointerup", () => b.classList.remove("is-press"));
-    b.addEventListener("pointercancel", () => b.classList.remove("is-press"));
-    b.addEventListener("pointerleave", () => b.classList.remove("is-press"));
+    }, { passive: true });
+    b.addEventListener("pointerup", () => b.classList.remove("is-press"), { passive: true });
+    b.addEventListener("pointercancel", () => b.classList.remove("is-press"), { passive: true });
+    b.addEventListener("pointerleave", () => b.classList.remove("is-press"), { passive: true });
   });
 
-  // ---- (3) 端で引っ張った時の“伸びるウィンドウ” ----
+  // ---- (4) 端で引っ張った時の“伸びるウィンドウ” ----
   let startY = 0;
   let pulling = false;
   let currentPull = 0;
-  let raf = 0;
-
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+  let rafBack = 0;
 
   const setPull = (v) => {
     currentPull = v;
@@ -615,18 +752,14 @@ h2{
   };
 
   const easeBack = () => {
-    cancelAnimationFrame(raf);
+    cancelAnimationFrame(rafBack);
     const step = () => {
-      // ばねっぽく戻す（簡易）
-      const v = currentPull * 0.86;
-      if (Math.abs(v) < 0.6) {
-        setPull(0);
-        return;
-      }
+      const v = currentPull * 0.84;
+      if (Math.abs(v) < 0.6) { setPull(0); return; }
       setPull(v);
-      raf = requestAnimationFrame(step);
+      rafBack = requestAnimationFrame(step);
     };
-    raf = requestAnimationFrame(step);
+    rafBack = requestAnimationFrame(step);
   };
 
   const getScrollState = () => {
@@ -635,7 +768,6 @@ h2{
     return { y, maxY };
   };
 
-  // iOSでpreventDefaultを効かせるためpassive:false
   window.addEventListener("touchstart", (e) => {
     if (!e.touches || e.touches.length !== 1) return;
     startY = e.touches[0].clientY;
@@ -652,17 +784,13 @@ h2{
     const atTop = y <= 0;
     const atBottom = y >= (maxY - 1);
 
-    // 上端で下に引っ張る or 下端で上に引っ張る時だけ反応
     if ((atTop && dy > 0) || (atBottom && dy < 0)) {
       pulling = true;
-
-      // 白い“ゴム”を見せにくくする（対応ブラウザのみ）
-      // ただしリンクタップなどを壊しにくい範囲で
       e.preventDefault();
 
-      // 伸び量（強すぎないように減衰）
-      const softened = Math.sign(dy) * Math.sqrt(Math.abs(dy)) * 7.5;
-      setPull(clamp(softened, -120, 120));
+      // 伸び量：平方根で減衰（強すぎないけど“効いてる”）
+      const softened = Math.sign(dy) * Math.sqrt(Math.abs(dy)) * 8.2;
+      setPull(clamp(softened, -140, 140));
     }
   }, { passive: false });
 
@@ -676,6 +804,58 @@ h2{
     if (!pulling) return;
     pulling = false;
     easeBack();
+  }, { passive: true });
+
+  // ---- (5) カードの3Dティルト（指/マウスで傾く） ----
+  // 傾きは軽めに（酔うなら数値を下げる）
+  const tiltMax = 7; // deg
+  let tiltRAF = 0;
+  let targetX = 0;
+  let targetY = 0;
+  let curX = 0;
+  let curY = 0;
+
+  const applyTilt = () => {
+    cancelAnimationFrame(tiltRAF);
+    const step = () => {
+      // 追従をなめらかに
+      curX += (targetX - curX) * 0.12;
+      curY += (targetY - curY) * 0.12;
+
+      root.style.setProperty("--tiltX", curX.toFixed(2) + "deg");
+      root.style.setProperty("--tiltY", curY.toFixed(2) + "deg");
+
+      // 十分近づいたら止める
+      if (Math.abs(targetX - curX) < 0.05 && Math.abs(targetY - curY) < 0.05) return;
+      tiltRAF = requestAnimationFrame(step);
+    };
+    tiltRAF = requestAnimationFrame(step);
+  };
+
+  const setTiltFromPoint = (clientX, clientY) => {
+    const r = card.getBoundingClientRect();
+    const px = (clientX - (r.left + r.width / 2)) / (r.width / 2);
+    const py = (clientY - (r.top + r.height / 2)) / (r.height / 2);
+
+    // 画面中心からのズレを傾きに
+    targetY = clamp(px * tiltMax, -tiltMax, tiltMax);
+    targetX = clamp(-py * tiltMax, -tiltMax, tiltMax);
+    applyTilt();
+  };
+
+  // pointermoveで追従（スマホでもOK）
+  window.addEventListener("pointermove", (e) => {
+    // スクロール中も動くのが嫌ならここを条件で止めてOK
+    setTiltFromPoint(e.clientX, e.clientY);
+  }, { passive: true });
+
+  // 離したら戻す
+  window.addEventListener("pointerleave", () => {
+    targetX = 0; targetY = 0; applyTilt();
+  }, { passive: true });
+
+  window.addEventListener("pointerup", () => {
+    targetX = 0; targetY = 0; applyTilt();
   }, { passive: true });
 })();
 </script>
