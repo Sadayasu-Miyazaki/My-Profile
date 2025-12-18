@@ -1,445 +1,683 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8" />
 <title>大木 / Passent - Links</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
 <style>
-/* ─────────────────────────────
-   基本デザイン：P2P Chat と同じ見た目
-────────────────────────────── */
-body {
-    margin: 0;
-    min-height: 100vh;
-    background: radial-gradient(circle at 10% 20%, #f8cdda 0, #1d2b64 60%, #141e30 100%);
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-    padding: 12px 10px 20px;
-    box-sizing: border-box;
+/* =========================================================
+   最高に途切れない背景 + 透明ガラスUI + スワイプ(引っ張り)アニメ
+========================================================= */
+:root{
+  --bg1:#f8cdda;
+  --bg2:#1d2b64;
+  --bg3:#141e30;
+
+  --glass: rgba(255,255,255,0.10);
+  --glass2: rgba(255,255,255,0.06);
+  --stroke: rgba(255,255,255,0.18);
+
+  --text: #f9fafb;
+  --muted: rgba(226,232,240,0.9);
+
+  --shadow: 0 18px 40px rgba(0,0,0,0.45);
+  --shadow2: 0 14px 35px rgba(0,0,0,0.55);
+
+  --radius: 22px;
+
+  /* JSが書き換える */
+  --pull: 0px;       /* 引っ張り量 */
+  --scrollY: 0px;    /* スクロール量 */
 }
 
-/* カード共通 */
-.card {
-    width: 100%;
-    max-width: 460px;
-    background: rgba(255,255,255,0.10);
-    border-radius: 22px;
-    box-shadow: 0 18px 40px rgba(0,0,0,0.45);
-    backdrop-filter: blur(24px);
-    border: 1px solid rgba(255,255,255,0.18);
-    padding: 20px 18px 18px;
-    animation: fadeIn 0.45s ease;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-    margin: 10px auto;
+/* 途切れない背景のためにhtml/body両方を塗る */
+html, body{
+  height: 100%;
+  background: radial-gradient(circle at 10% 20%, var(--bg1) 0, var(--bg2) 60%, var(--bg3) 100%);
+  background-color: #0b1020; /* 白のチラ見え対策 */
 }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px) scale(0.98); }
-    to   { opacity: 1; transform: translateY(0) scale(1); }
+body{
+  margin: 0;
+  min-height: 100vh;
+  padding: 12px 10px 20px;
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  overflow-x: hidden;
+
+  /* Android/Chromiumの“余計な跳ね返り”を抑える */
+  overscroll-behavior-y: none;
+  -webkit-overflow-scrolling: touch;
+
+  /* iOSで下の白が見えるのを抑えやすくする */
+  background-color: #0b1020;
+  touch-action: pan-y;
 }
 
-/* タイトル部分 */
-.title-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    margin-bottom: 8px;
-}
-.title-accent {
-    width: 26px;
-    height: 26px;
-    border-radius: 999px;
-    background: conic-gradient(from 200deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee, #ff9a9e);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 14px;
-}
-h2 {
-    margin: 0;
-    text-align: center;
-    font-weight: 600;
-    color: #f9fafb;
-    letter-spacing: 0.03em;
+/* 背景を固定レイヤー化（引っ張っても途切れない） */
+body::before{
+  content:"";
+  position: fixed;
+  inset: -30vh -30vw; /* 引っ張り/ズームでも端が見えないように広め */
+  z-index: -3;
+  background:
+    radial-gradient(circle at 10% 20%, var(--bg1) 0, var(--bg2) 60%, var(--bg3) 100%);
+  transform: translate3d(0, calc(var(--scrollY) * -0.08), 0) scale(1.02);
+  will-change: transform;
 }
 
-/* ステータスラベル風の説明 */
-.status-pill {
-    align-self: center;
-    margin: 6px 0 10px;
-    padding: 6px 12px;
-    border-radius: 999px;
-    font-size: 12px;
-    color: #e5ecff;
-    background: rgba(15,118,255,0.16);
-    border: 1px solid rgba(144,202,249,0.4);
-}
-
-/* フッター */
-.footer {
-    margin-top: 8px;
-    text-align: center;
-    font-size: 11px;
-    color: rgba(241,245,249,0.7);
-    letter-spacing: 0.04em;
-}
-
-/* ─────────────────────────────
-   SNSリンク用のスタイル
-────────────────────────────── */
-
-/* プロフィール行 */
-.profile-row {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin: 6px 0 14px;
-}
-.avatar-wrap {
-    width: 56px;
-    height: 56px;
-    border-radius: 18px;
-    padding: 2px;
-    background: linear-gradient(135deg, #ff9a9e, #a6c1ee);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.6);
-    box-sizing: border-box;
-}
-.avatar-inner {
-    width: 100%;
-    height: 100%;
-    border-radius: 16px;
-    overflow: hidden;
-    background: radial-gradient(circle at 20% 0, #1f2937, #020617);
-}
-.avatar-inner img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-.profile-text {
-    flex: 1;
-    min-width: 0;
-}
-.profile-name {
-    margin: 0 0 2px;
-    font-size: 16px;
-    font-weight: 600;
-    color: #f9fafb;
-}
-.profile-sub {
-    margin: 0;
-    font-size: 12px;
-    color: rgba(226,232,240,0.9);
-}
-
-/* リンクリスト */
-.links {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 6px;
-}
-
-/* ボタン風リンク */
-.link-btn {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-    padding: 9px 11px;
-    border-radius: 14px;
-    text-decoration: none;
-    color: #e5e7eb;
-    background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(30,64,175,0.78));
-    border: 1px solid rgba(148,163,184,0.65);
-    box-shadow: 0 6px 14px rgba(15,23,42,0.7);
-    transition: transform 0.12s ease, box-shadow 0.12s ease, filter 0.12s ease, border-color 0.12s ease;
-    box-sizing: border-box;
-}
-.link-btn:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-    box-shadow: 0 10px 20px rgba(15,23,42,0.85);
-    border-color: rgba(226,232,240,0.9);
-}
-.link-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 4px 10px rgba(15,23,42,0.7);
-}
-
-/* 左の丸アイコン */
-.link-icon {
-    width: 30px;
-    height: 30px;
-    border-radius: 999px;
-    background: rgba(15,23,42,0.92);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 6px 14px rgba(0,0,0,0.6);
-    border: 1px solid rgba(148,163,184,0.7);
-    overflow: hidden;
-    flex-shrink: 0;
-}
-.link-icon img,
-.link-icon svg {
-    width: 18px;
-    height: 18px;
-}
-
-/* テキスト部 */
-.link-main {
-    flex: 1;
-    min-width: 0;
-}
-.link-title {
-    font-size: 13px;
-    font-weight: 500;
-    margin: 0;
-    color: #e5e7eb;
-}
-.link-sub {
-    font-size: 11px;
-    margin: 1px 0 0;
-    color: rgba(209,213,219,0.9);
-}
-
-/* 右側の矢印 */
-.link-arrow {
-    font-size: 16px;
-    opacity: 0.7;
-}
-
-/* SNS/サイトごとの色違い */
-.link-btn.discord {
-    background: linear-gradient(135deg, rgba(37, 35, 88, 0.95), rgba(88, 101, 242, 0.88));
-}
-.link-btn.instagram {
-    background: linear-gradient(135deg, rgba(88, 28, 135, 0.95), rgba(244, 114, 182, 0.85));
-}
-.link-btn.x {
-    background: linear-gradient(135deg, rgba(15,23,42,0.98), rgba(55,65,81,0.9));
-}
-.link-btn.line {
-    background: linear-gradient(135deg, rgba(4,120,87,0.95), rgba(16,185,129,0.9));
-}
-.link-btn.secret {
-    background: linear-gradient(135deg, rgba(30,64,175,0.95), rgba(56,189,248,0.9));
-}
-.link-btn.sharefire {
-    background: linear-gradient(135deg, rgba(185, 28, 28, 0.95), rgba(249, 115, 22, 0.9));
+/* うっすらオーロラ/光の漂い（超かっこいい系） */
+body::after{
+  content:"";
+  position: fixed;
+  inset: -25vh -25vw;
+  z-index: -2;
+  background:
+    radial-gradient(closest-side at 20% 30%, rgba(255,154,158,0.35), transparent 55%),
+    radial-gradient(closest-side at 80% 20%, rgba(166,193,238,0.30), transparent 58%),
+    radial-gradient(closest-side at 65% 85%, rgba(56,189,248,0.22), transparent 60%),
+    radial-gradient(closest-side at 25% 85%, rgba(244,114,182,0.18), transparent 60%);
+  filter: blur(30px);
+  transform: translate3d(0, calc(var(--scrollY) * -0.14), 0);
+  opacity: 0.95;
+  will-change: transform;
 }
 
 /* ─────────── PC時だけ中央寄せ ─────────── */
 @media (min-width: 768px) {
-    body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        padding: 16px;
-    }
+  body{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+}
+
+/* =========================================================
+   カード（透明ガラスウィンドウ）＋ 引っ張りで伸びる演出
+========================================================= */
+.card{
+  width: 100%;
+  max-width: 460px;
+  border-radius: var(--radius);
+  padding: 20px 18px 18px;
+  box-sizing: border-box;
+  margin: 10px auto;
+
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
+  border: 1px solid rgba(255,255,255,0.18);
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(28px) saturate(140%);
+  -webkit-backdrop-filter: blur(28px) saturate(140%);
+
+  display: flex;
+  flex-direction: column;
+
+  /* 引っ張りで“ウィンドウが伸びる” */
+  transform:
+    translate3d(0, calc(var(--pull) * 0.35), 0)
+    scale3d(1, calc(1 + (abs(var(--pull)) / 900)), 1);
+  transform-origin: center;
+  will-change: transform;
+
+  /* 登場アニメ */
+  animation: popIn 0.55s cubic-bezier(.2,.9,.2,1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* ガラスの“光のスイープ” */
+.card::before{
+  content:"";
+  position: absolute;
+  inset: -40% -60%;
+  background: linear-gradient(
+    110deg,
+    transparent 35%,
+    rgba(255,255,255,0.18) 45%,
+    rgba(255,255,255,0.08) 55%,
+    transparent 65%
+  );
+  transform: translateX(-20%) rotate(8deg);
+  opacity: 0.8;
+  pointer-events: none;
+  animation: shine 6s ease-in-out infinite;
+}
+
+/* ふわっとした外側グロー */
+.card::after{
+  content:"";
+  position: absolute;
+  inset: -2px;
+  border-radius: calc(var(--radius) + 2px);
+  padding: 2px;
+  background: conic-gradient(
+    from 220deg,
+    rgba(255,154,158,0.65),
+    rgba(250,208,196,0.35),
+    rgba(251,194,235,0.45),
+    rgba(166,193,238,0.55),
+    rgba(56,189,248,0.40),
+    rgba(255,154,158,0.65)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0.55;
+  filter: blur(0.1px);
+  pointer-events: none;
+}
+
+@keyframes popIn{
+  from{ opacity: 0; transform: translateY(18px) scale(0.98); }
+  to  { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes shine{
+  0%,100%{ transform: translateX(-25%) rotate(8deg); opacity: 0.55; }
+  50%    { transform: translateX(20%)  rotate(8deg); opacity: 0.85; }
+}
+
+/* motion弱め設定 */
+@media (prefers-reduced-motion: reduce){
+  .card{ animation: none; }
+  .card::before{ animation: none; }
+}
+
+/* =========================================================
+   タイトル部分
+========================================================= */
+.title-row{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.title-accent{
+  width: 28px;
+  height: 28px;
+  border-radius: 999px;
+  background: conic-gradient(from 200deg, #ff9a9e, #fad0c4, #fbc2eb, #a6c1ee, #38bdf8, #ff9a9e);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 14px;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.55);
+  border: 1px solid rgba(255,255,255,0.25);
+}
+h2{
+  margin: 0;
+  text-align: center;
+  font-weight: 650;
+  letter-spacing: 0.03em;
+}
+
+.status-pill{
+  align-self: center;
+  margin: 6px 0 12px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: rgba(235,245,255,0.95);
+  background: rgba(15,118,255,0.14);
+  border: 1px solid rgba(144,202,249,0.35);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.25) inset;
+}
+
+/* =========================================================
+   プロフィール
+========================================================= */
+.profile-row{
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 8px 0 14px;
+}
+
+.avatar-wrap{
+  width: 58px;
+  height: 58px;
+  border-radius: 18px;
+  padding: 2px;
+  background: linear-gradient(135deg, rgba(255,154,158,0.95), rgba(166,193,238,0.9));
+  box-shadow: 0 14px 32px rgba(0,0,0,0.6);
+  box-sizing: border-box;
+  position: relative;
+  overflow: hidden;
+}
+
+/* 角に微光 */
+.avatar-wrap::after{
+  content:"";
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.35), transparent 55%);
+  transform: rotate(18deg);
+  pointer-events: none;
+}
+
+.avatar-inner{
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  background: radial-gradient(circle at 20% 0, #1f2937, #020617);
+  border: 1px solid rgba(255,255,255,0.12);
+}
+.avatar-inner img{
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-text{ flex: 1; min-width: 0; }
+.profile-name{
+  margin: 0 0 2px;
+  font-size: 16px;
+  font-weight: 650;
+  color: var(--text);
+}
+.profile-sub{
+  margin: 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+/* =========================================================
+   リンクリスト（スワイプ/スクロールで“動いて見える”）
+========================================================= */
+.links{
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+/* ボタン風リンク */
+.link-btn{
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 11px;
+  border-radius: 14px;
+  text-decoration: none;
+  color: #e5e7eb;
+
+  background: linear-gradient(135deg, rgba(15,23,42,0.86), rgba(30,64,175,0.68));
+  border: 1px solid rgba(148,163,184,0.55);
+  box-shadow: 0 10px 24px rgba(0,0,0,0.45);
+  box-sizing: border-box;
+
+  position: relative;
+  overflow: hidden;
+
+  /* “ガラスっぽい反射” */
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+
+  /* スクロール出現アニメ用（JSでon） */
+  opacity: 0;
+  transform: translateY(10px) scale(0.99);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    filter 0.18s ease,
+    border-color 0.18s ease,
+    opacity 0.35s ease;
+}
+.link-btn.is-in{
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+.link-btn:hover{
+  filter: brightness(1.05);
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px rgba(0,0,0,0.55);
+  border-color: rgba(226,232,240,0.85);
+}
+.link-btn:active{
+  transform: translateY(0);
+  box-shadow: 0 10px 22px rgba(0,0,0,0.45);
+}
+
+/* タップ時の“波紋/スワイプ感” */
+.link-btn::before{
+  content:"";
+  position: absolute;
+  inset: -60%;
+  background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%),
+    rgba(255,255,255,0.22),
+    transparent 55%);
+  opacity: 0;
+  transform: scale(0.8);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  pointer-events: none;
+}
+.link-btn.is-press::before{
+  opacity: 1;
+  transform: scale(1.15);
+}
+
+/* 左の丸アイコン */
+.link-icon{
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: rgba(15,23,42,0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 18px rgba(0,0,0,0.45);
+  border: 1px solid rgba(148,163,184,0.55);
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.link-icon img,
+.link-icon svg{
+  width: 18px;
+  height: 18px;
+}
+
+/* テキスト部 */
+.link-main{ flex: 1; min-width: 0; }
+.link-title{
+  font-size: 13px;
+  font-weight: 600;
+  margin: 0;
+  color: #f1f5f9;
+  letter-spacing: 0.01em;
+}
+.link-sub{
+  font-size: 11px;
+  margin: 1px 0 0;
+  color: rgba(209,213,219,0.92);
+}
+
+/* 右側の矢印 */
+.link-arrow{
+  font-size: 18px;
+  opacity: 0.75;
+  transform: translateX(0);
+  transition: transform 0.18s ease, opacity 0.18s ease;
+}
+.link-btn:hover .link-arrow{
+  transform: translateX(2px);
+  opacity: 0.95;
+}
+
+/* 色違い */
+.link-btn.discord{
+  background: linear-gradient(135deg, rgba(37, 35, 88, 0.92), rgba(88, 101, 242, 0.80));
+}
+.link-btn.instagram{
+  background: linear-gradient(135deg, rgba(88, 28, 135, 0.92), rgba(244, 114, 182, 0.78));
+}
+.link-btn.x{
+  background: linear-gradient(135deg, rgba(15,23,42,0.92), rgba(55,65,81,0.82));
+}
+.link-btn.line{
+  background: linear-gradient(135deg, rgba(4,120,87,0.92), rgba(16,185,129,0.80));
+}
+.link-btn.secret{
+  background: linear-gradient(135deg, rgba(30,64,175,0.92), rgba(56,189,248,0.78));
+}
+.link-btn.sharefire{
+  background: linear-gradient(135deg, rgba(185, 28, 28, 0.92), rgba(249, 115, 22, 0.80));
+}
+
+.footer{
+  margin-top: 10px;
+  text-align: center;
+  font-size: 11px;
+  color: rgba(241,245,249,0.7);
+  letter-spacing: 0.04em;
 }
 </style>
 </head>
-<body>
 
-<div class="card">
+<body>
+  <div class="card" id="glassCard">
     <!-- タイトル -->
     <div class="title-row">
-        <div class="title-accent">🔗</div>
-        <h2>P2P Style Links</h2>
+      <div class="title-accent">🔗</div>
+      <h2>P2P Style Links</h2>
     </div>
     <div class="status-pill">大木 / Passent のSNS & サイトまとめ</div>
 
     <!-- プロフィール -->
     <div class="profile-row">
-        <div class="avatar-wrap">
-            <div class="avatar-inner">
-                <img src="profile.png" alt="大木 / Passent のアイコン">
-            </div>
+      <div class="avatar-wrap">
+        <div class="avatar-inner">
+          <img src="profile.png" alt="大木 / Passent のアイコン" />
         </div>
-        <div class="profile-text">
-            <p class="profile-name">大木 / Passent</p>
-            <p class="profile-sub">SimCityガチ勢・マリカガチ勢・Valoエンジョイ勢</p>
-        </div>
+      </div>
+      <div class="profile-text">
+        <p class="profile-name">大木 / Passent</p>
+        <p class="profile-sub">SimCityガチ勢・マリカガチ勢・Valoエンジョイ勢</p>
+      </div>
     </div>
 
     <!-- リンク一覧 -->
-    <div class="links">
-        <!-- Discord -->
-        <a
-            class="link-btn discord"
-            href="https://discord.com/users/1062279074283782164"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <div class="link-icon">
-                <img
-                    src="https://cdn.simpleicons.org/discord/ffffff?viewbox=auto&size=20"
-                    alt="Discord"
-                    loading="lazy"
-                >
-            </div>
-            <div class="link-main">
-                <p class="link-title">Discord</p>
-                <p class="link-sub">@大木 / Passent</p>
-            </div>
-            <div class="link-arrow">›</div>
-        </a>
+    <div class="links" id="links">
+      <!-- Discord -->
+      <a class="link-btn discord" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon">
+          <img src="https://cdn.simpleicons.org/discord/ffffff?viewbox=auto&size=20" alt="Discord" loading="lazy" />
+        </div>
+        <div class="link-main">
+          <p class="link-title">Discord</p>
+          <p class="link-sub">@大木 / Passent</p>
+        </div>
+        <div class="link-arrow">›</div>
+      </a>
 
-        <!-- Instagram -->
-        <a
-            class="link-btn instagram"
-            href="https://www.instagram.com/ta1boku_astler"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <div class="link-icon">
-                <img
-                    src="https://cdn.simpleicons.org/instagram/ffffff?viewbox=auto&size=20"
-                    alt="Instagram"
-                    loading="lazy"
-                >
-            </div>
-            <div class="link-main">
-                <p class="link-title">Instagram</p>
-                <p class="link-sub">@ta1boku_astler</p>
-            </div>
-            <div class="link-arrow">›</div>
-        </a>
+      <!-- Instagram -->
+      <a class="link-btn instagram" href="https://www.instagram.com/ta1boku_astler" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon">
+          <img src="https://cdn.simpleicons.org/instagram/ffffff?viewbox=auto&size=20" alt="Instagram" loading="lazy" />
+        </div>
+        <div class="link-main">
+          <p class="link-title">Instagram</p>
+          <p class="link-sub">@ta1boku_astler</p>
+        </div>
+        <div class="link-arrow">›</div>
+      </a>
 
-        <!-- X -->
-        <a
-            class="link-btn x"
-            href="https://x.com/taiboku_passent"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <div class="link-icon">
-                <img
-                    src="https://cdn.simpleicons.org/x/ffffff?viewbox=auto&size=20"
-                    alt="X"
-                    loading="lazy"
-                >
-            </div>
-            <div class="link-main">
-                <p class="link-title">X (旧Twitter)</p>
-                <p class="link-sub">@taiboku_passent</p>
-            </div>
-            <div class="link-arrow">›</div>
-        </a>
+      <!-- X -->
+      <a class="link-btn x" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon">
+          <img src="https://cdn.simpleicons.org/x/ffffff?viewbox=auto&size=20" alt="X" loading="lazy" />
+        </div>
+        <div class="link-main">
+          <p class="link-title">X (旧Twitter)</p>
+          <p class="link-sub">@taiboku_passent</p>
+        </div>
+        <div class="link-arrow">›</div>
+      </a>
 
-        <!-- LINE -->
-        <a
-            class="link-btn line"
-            href="https://line.me/ti/p/8dDJb7WNhv"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <div class="link-icon">
-                <img
-                    src="https://cdn.simpleicons.org/line/ffffff?viewbox=auto&size=20"
-                    alt="LINE"
-                    loading="lazy"
-                >
-            </div>
-            <div class="link-main">
-                <p class="link-title">LINE</p>
-                <p class="link-sub">友だち追加リンク</p>
-            </div>
-            <div class="link-arrow">›</div>
-        </a>
+      <!-- LINE -->
+      <a class="link-btn line" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon">
+          <img src="https://cdn.simpleicons.org/line/ffffff?viewbox=auto&size=20" alt="LINE" loading="lazy" />
+        </div>
+        <div class="link-main">
+          <p class="link-title">LINE</p>
+          <p class="link-sub">友だち追加リンク</p>
+        </div>
+        <div class="link-arrow">›</div>
+      </a>
 
-        <!-- Secret Chat Web -->
-        <a
-            class="link-btn secret"
-            href="https://secret-chat-tau.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <div class="link-icon">
-                <!-- 鍵付きチャットアイコン -->
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    width="18"
-                    height="18"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="M7 11a4 4 0 1 1 8 0v1.3"
-                        stroke="white"
-                        stroke-width="1.6"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                    <rect
-                        x="5"
-                        y="11"
-                        width="14"
-                        height="8"
-                        rx="2.5"
-                        stroke="white"
-                        stroke-width="1.6"
-                    />
-                    <circle cx="12" cy="15" r="1.2" fill="white" />
-                </svg>
-            </div>
-            <div class="link-main">
-                <p class="link-title">Secret Chat Web</p>
-                <p class="link-sub">P2P通話・チャットサイト</p>
-            </div>
-            <div class="link-arrow">›</div>
-        </a>
+      <!-- Secret Chat Web -->
+      <a class="link-btn secret" href="https://secret-chat-tau.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
+            <path d="M7 11a4 4 0 1 1 8 0v1.3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+            <rect x="5" y="11" width="14" height="8" rx="2.5" stroke="white" stroke-width="1.6" />
+            <circle cx="12" cy="15" r="1.2" fill="white" />
+          </svg>
+        </div>
+        <div class="link-main">
+          <p class="link-title">Secret Chat Web</p>
+          <p class="link-sub">P2P通話・チャットサイト</p>
+        </div>
+        <div class="link-arrow">›</div>
+      </a>
 
-        <!-- Share Fire -->
-        <a
-            class="link-btn sharefire"
-            href="https://file-share-gold.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-        >
-            <div class="link-icon">
-                <!-- 炎とファイルっぽいアイコン -->
-                <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    width="18"
-                    height="18"
-                    aria-hidden="true"
-                >
-                    <path
-                        d="M12 3s-2 2-2 4.5S12 11 12 13s-1 3.5-3 3.5S6 15.5 6 13c0-2.2 1.1-3.8 2.2-4.9"
-                        stroke="white"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                    <path
-                        d="M14 9.5c1 .9 2 2.2 2 3.8 0 2.4-1.5 4.2-4 4.2"
-                        stroke="white"
-                        stroke-width="1.5"
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                    />
-                </svg>
-            </div>
-            <div class="link-main">
-                <p class="link-title">Share Fire</p>
-                <p class="link-sub">P2Pファイル共有サイト</p>
-            </div>
-            <div class="link-arrow">›</div>
-        </a>
+      <!-- Share Fire -->
+      <a class="link-btn sharefire" href="https://file-share-gold.vercel.app/" target="_blank" rel="noopener noreferrer">
+        <div class="link-icon">
+          <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
+            <path d="M12 3s-2 2-2 4.5S12 11 12 13s-1 3.5-3 3.5S6 15.5 6 13c0-2.2 1.1-3.8 2.2-4.9"
+              stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+            <path d="M14 9.5c1 .9 2 2.2 2 3.8 0 2.4-1.5 4.2-4 4.2"
+              stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </div>
+        <div class="link-main">
+          <p class="link-title">Share Fire</p>
+          <p class="link-sub">P2Pファイル共有サイト</p>
+        </div>
+        <div class="link-arrow">›</div>
+      </a>
     </div>
 
-    <div class="footer">
-        taiboku_passent all right reserved
-    </div>
-</div>
+    <div class="footer">taiboku_passent all right reserved</div>
+  </div>
 
+<script>
+/* =========================================================
+   1) 背景パララックス（スクロールで“動く”）
+   2) ボタンの波紋（スワイプ/タップ感）
+   3) 端で引っ張っても白が見えにくい + ウィンドウが伸びる
+========================================================= */
+(() => {
+  const root = document.documentElement;
+  const card = document.getElementById("glassCard");
+
+  // ---- (1) 背景パララックス ----
+  const onScroll = () => {
+    const y = window.scrollY || 0;
+    root.style.setProperty("--scrollY", y + "px");
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  // ---- (2) リンクの波紋（押した場所に光） + 出現アニメ ----
+  const btns = [...document.querySelectorAll(".link-btn")];
+
+  // 出現（スクロール）アニメ
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) {
+      if (e.isIntersecting) e.target.classList.add("is-in");
+    }
+  }, { threshold: 0.15 });
+  btns.forEach(b => io.observe(b));
+
+  // 押した場所の座標で光る
+  const setRipplePoint = (el, clientX, clientY) => {
+    const r = el.getBoundingClientRect();
+    const rx = ((clientX - r.left) / r.width) * 100;
+    const ry = ((clientY - r.top) / r.height) * 100;
+    el.style.setProperty("--rx", rx + "%");
+    el.style.setProperty("--ry", ry + "%");
+  };
+
+  btns.forEach((b) => {
+    // マウス
+    b.addEventListener("pointerdown", (ev) => {
+      setRipplePoint(b, ev.clientX, ev.clientY);
+      b.classList.add("is-press");
+    });
+    b.addEventListener("pointerup", () => b.classList.remove("is-press"));
+    b.addEventListener("pointercancel", () => b.classList.remove("is-press"));
+    b.addEventListener("pointerleave", () => b.classList.remove("is-press"));
+  });
+
+  // ---- (3) 端で引っ張った時の“伸びるウィンドウ” ----
+  let startY = 0;
+  let pulling = false;
+  let currentPull = 0;
+  let raf = 0;
+
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+  const setPull = (v) => {
+    currentPull = v;
+    root.style.setProperty("--pull", v.toFixed(1) + "px");
+  };
+
+  const easeBack = () => {
+    cancelAnimationFrame(raf);
+    const step = () => {
+      // ばねっぽく戻す（簡易）
+      const v = currentPull * 0.86;
+      if (Math.abs(v) < 0.6) {
+        setPull(0);
+        return;
+      }
+      setPull(v);
+      raf = requestAnimationFrame(step);
+    };
+    raf = requestAnimationFrame(step);
+  };
+
+  const getScrollState = () => {
+    const y = window.scrollY || 0;
+    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+    return { y, maxY };
+  };
+
+  // iOSでpreventDefaultを効かせるためpassive:false
+  window.addEventListener("touchstart", (e) => {
+    if (!e.touches || e.touches.length !== 1) return;
+    startY = e.touches[0].clientY;
+    pulling = false;
+  }, { passive: true });
+
+  window.addEventListener("touchmove", (e) => {
+    if (!e.touches || e.touches.length !== 1) return;
+
+    const { y, maxY } = getScrollState();
+    const nowY = e.touches[0].clientY;
+    const dy = nowY - startY;
+
+    const atTop = y <= 0;
+    const atBottom = y >= (maxY - 1);
+
+    // 上端で下に引っ張る or 下端で上に引っ張る時だけ反応
+    if ((atTop && dy > 0) || (atBottom && dy < 0)) {
+      pulling = true;
+
+      // 白い“ゴム”を見せにくくする（対応ブラウザのみ）
+      // ただしリンクタップなどを壊しにくい範囲で
+      e.preventDefault();
+
+      // 伸び量（強すぎないように減衰）
+      const softened = Math.sign(dy) * Math.sqrt(Math.abs(dy)) * 7.5;
+      setPull(clamp(softened, -120, 120));
+    }
+  }, { passive: false });
+
+  window.addEventListener("touchend", () => {
+    if (!pulling) return;
+    pulling = false;
+    easeBack();
+  }, { passive: true });
+
+  window.addEventListener("touchcancel", () => {
+    if (!pulling) return;
+    pulling = false;
+    easeBack();
+  }, { passive: true });
+})();
+</script>
 </body>
 </html>
