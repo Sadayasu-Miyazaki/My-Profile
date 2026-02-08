@@ -1,648 +1,324 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="ja">
 <head>
-<meta charset="UTF-8" />
-<title>リンク集</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>リンク集</title>
+  <meta name="description" content="リンク集" />
 
-<style>
-/* =========================================================
-   Bright iOS-like Glass (回転オーロラ無し)
-   - どんなデバイスでも「必ず中央」に見えるレイアウトへ修正
-========================================================= */
-:root{
-  --bgA:#f7fbff;
-  --bgB:#eaf2ff;
+  <style>
+    :root{
+      --bg0:#06060a;
+      --bg1:#0b0710;
+      --text:#f3f3f7;
+      --muted:rgba(243,243,247,.72);
 
-  --ink:#0b1220;
-  --muted: rgba(15,23,42,0.72);
+      --red:#ff2a2a;
+      --purple:#8a2be2;
+      --mag:#ff2bd6;
 
-  --shadow: 0 18px 60px rgba(2,6,23,0.18);
-  --radius: 26px;
+      --glass: rgba(18, 12, 22, 0.48);
+      --glass2: rgba(10, 8, 14, 0.35);
+      --border: rgba(255,255,255,0.10);
+      --border2: rgba(255,255,255,0.06);
 
-  /* JSが書き換える */
-  --scrollY: 0px;
-  --pull: 0px;
-  --tiltX: 0deg;
-  --tiltY: 0deg;
-}
+      --shadow: 0 18px 60px rgba(0,0,0,0.62);
+      --radius: 22px;
+      --radius2: 28px;
+    }
 
-html, body{
-  height: 100%;
-  background: #f7fbff;
-  background-color: #f7fbff;
-  margin: 0;
-}
+    *{ box-sizing:border-box; }
+    html,body{ height:100%; }
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
+      color: var(--text);
+      background: radial-gradient(1200px 900px at 20% 10%, rgba(138,43,226,0.22), transparent 55%),
+                  radial-gradient(1000px 800px at 85% 20%, rgba(255,42,42,0.18), transparent 55%),
+                  radial-gradient(900px 700px at 55% 95%, rgba(255,43,214,0.12), transparent 55%),
+                  linear-gradient(180deg, var(--bg0), var(--bg1));
+      overflow-x:hidden;
+    }
 
-/* ✅ 中央固定：ページは“常に”中央配置（上に寄らない） */
-body{
-  min-height: 100svh; /* iOSのアドレスバー変動に強い */
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    .bg{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:-1;
+    }
+    .bg-blobs{
+      position:absolute;
+      inset:-20%;
+      background:
+        radial-gradient(420px 320px at 15% 20%, rgba(255,42,42,0.28), transparent 60%),
+        radial-gradient(520px 400px at 80% 15%, rgba(138,43,226,0.30), transparent 62%),
+        radial-gradient(560px 460px at 55% 85%, rgba(255,43,214,0.18), transparent 63%);
+      filter: blur(26px);
+      transform: translateZ(0);
+      opacity: 0.95;
+    }
+    .grain{
+      position:absolute;
+      inset:0;
+      opacity:0.10;
+      background-image:
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+    }
 
-  padding: calc(14px + env(safe-area-inset-top))
-           calc(12px + env(safe-area-inset-right))
-           calc(18px + env(safe-area-inset-bottom))
-           calc(12px + env(safe-area-inset-left));
+    .wrap{
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 18px 16px 42px;
+    }
 
-  box-sizing: border-box;
-  overflow-x: hidden;
-  overflow-y: auto; /* 中身が長い場合はスクロール */
+    .glass{
+      background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.03)) , var(--glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius2);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px) saturate(140%);
+      -webkit-backdrop-filter: blur(16px) saturate(140%);
+      position: relative;
+      overflow: hidden;
+    }
 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: var(--ink);
+    /* iOSっぽい「湾曲した光」 */
+    .glass::before{
+      content:"";
+      position:absolute;
+      inset:-40%;
+      background:
+        radial-gradient(500px 260px at 30% 20%, rgba(255,255,255,0.16), transparent 60%),
+        radial-gradient(520px 280px at 80% 10%, rgba(255,255,255,0.10), transparent 62%),
+        radial-gradient(520px 300px at 45% 95%, rgba(255,255,255,0.06), transparent 65%);
+      transform: rotate(-8deg);
+      pointer-events:none;
+    }
 
-  overscroll-behavior-y: none;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
-}
+    /* うっすら色の縁取り */
+    .glass::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      padding:1px;
+      border-radius: inherit;
+      background: linear-gradient(135deg,
+        rgba(255,42,42,0.45),
+        rgba(138,43,226,0.35),
+        rgba(255,43,214,0.25),
+        rgba(255,255,255,0.10)
+      );
+      -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events:none;
+      opacity: 0.45;
+    }
 
-/* 背景（固定、途切れにくい） */
-body::before{
-  content:"";
-  position: fixed;
-  inset: -25vh -25vw;
-  z-index: -3;
-  background:
-    radial-gradient(circle at 12% 18%, rgba(56,189,248,0.30), transparent 55%),
-    radial-gradient(circle at 85% 20%, rgba(167,139,250,0.26), transparent 58%),
-    radial-gradient(circle at 80% 85%, rgba(34,197,94,0.20), transparent 62%),
-    radial-gradient(circle at 15% 85%, rgba(244,114,182,0.18), transparent 62%),
-    linear-gradient(180deg, var(--bgA), var(--bgB));
-  transform: translate3d(0, calc(var(--scrollY) * -0.06), 0) scale(1.02);
-  will-change: transform;
-}
+    .hero{
+      padding: 16px 16px 18px;
+      margin-top: 10px;
+    }
+    .hero-top{
+      display:flex;
+      align-items:center;
+      gap: 14px;
+      position:relative;
+      z-index:1;
+    }
+    .avatar{
+      width: 62px;
+      height: 62px;
+      border-radius: 18px;
+      object-fit: cover;
+      border: 1px solid var(--border2);
+      box-shadow: 0 10px 30px rgba(0,0,0,0.45);
+      background: rgba(255,255,255,0.06);
+    }
+    .title{
+      margin:0;
+      font-size: 26px;
+      letter-spacing: .02em;
+    }
+    .subtitle{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.4;
+    }
 
-/* うっすら粒（回転なし） */
-body::after{
-  content:"";
-  position: fixed;
-  inset: -10vh -10vw;
-  z-index: -2;
-  background:
-    radial-gradient(1px 1px at 20% 30%, rgba(255,255,255,0.9), transparent 60%),
-    radial-gradient(1px 1px at 70% 25%, rgba(255,255,255,0.75), transparent 60%),
-    radial-gradient(1px 1px at 40% 70%, rgba(255,255,255,0.65), transparent 60%),
-    radial-gradient(1px 1px at 85% 80%, rgba(255,255,255,0.65), transparent 60%),
-    radial-gradient(1px 1px at 15% 85%, rgba(255,255,255,0.65), transparent 60%),
-    radial-gradient(1px 1px at 55% 55%, rgba(255,255,255,0.65), transparent 60%);
-  opacity: 0.28;
-  transform: translate3d(0, calc(var(--scrollY) * -0.10), 0);
-  animation: drift 8.5s ease-in-out infinite;
-  will-change: transform;
-}
-@keyframes drift{
-  0%,100%{ transform: translate3d(0, calc(var(--scrollY) * -0.10), 0); }
-  50%     { transform: translate3d(0, calc(var(--scrollY) * -0.10 - 16px), 0); }
-}
+    .grid{
+      margin-top: 14px;
+      display:grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
 
-/* ✅ 中央固定の“土台” */
-.shell{
-  width: 100%;
-  display: flex;
-  justify-content: center;
-}
+    .btn{
+      text-decoration:none;
+      color: var(--text);
+      padding: 14px 14px;
+      border-radius: var(--radius);
+      display:flex;
+      align-items:center;
+      gap: 10px;
+      min-height: 58px;
+      position:relative;
+      z-index:0;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.02)), var(--glass2);
+      border: 1px solid rgba(255,255,255,0.10);
+      box-shadow: 0 14px 45px rgba(0,0,0,0.55);
+      backdrop-filter: blur(14px) saturate(150%);
+      -webkit-backdrop-filter: blur(14px) saturate(150%);
+      overflow:hidden;
+      transition: transform .14s ease, border-color .14s ease, box-shadow .14s ease;
+    }
+    .btn:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.16);
+      box-shadow: 0 18px 60px rgba(0,0,0,0.62);
+    }
+    .btn:active{
+      transform: translateY(0px) scale(0.995);
+    }
 
-/* ✅ 画面幅が違っても左右が切れない幅指定 */
-.card{
-  width: min(92vw, 480px);
-  border-radius: var(--radius);
-  padding: 20px 18px 18px;
-  box-sizing: border-box;
+    /* 以前の絵文字枠を「SNSアイコン枠」に */
+    .iconBox{
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      display:grid;
+      place-items:center;
+      background: radial-gradient(18px 18px at 30% 25%, rgba(255,255,255,0.20), transparent 60%),
+                  linear-gradient(135deg, rgba(255,42,42,0.20), rgba(138,43,226,0.16));
+      border: 1px solid rgba(255,255,255,0.10);
+      flex: 0 0 auto;
+      overflow:hidden;
+    }
+    .icon{
+      width: 22px;
+      height: 22px;
+      display:block;
+      object-fit: contain;
+      /* faviconが白地でも浮くように、ほんの少し影 */
+      filter: drop-shadow(0 3px 10px rgba(0,0,0,0.45));
+    }
 
-  background: linear-gradient(180deg, rgba(255,255,255,0.72), rgba(255,255,255,0.50));
-  border: 1px solid rgba(2,6,23,0.10);
-  box-shadow: var(--shadow);
+    .label{
+      flex: 1 1 auto;
+      font-size: 14px;
+      line-height: 1.2;
+      word-break: break-word;
+    }
 
-  backdrop-filter: blur(22px) saturate(140%);
-  -webkit-backdrop-filter: blur(22px) saturate(140%);
+    .chev{
+      flex: 0 0 auto;
+      color: rgba(243,243,247,0.70);
+      font-size: 20px;
+      margin-left: 6px;
+    }
 
-  position: relative;
-  overflow: hidden;
+    .footer{
+      margin-top: 16px;
+      text-align:center;
+      color: rgba(243,243,247,0.55);
+      font-size: 12px;
+    }
 
-  transform:
-    translate3d(0, calc(var(--pull) * 0.34), 0)
-    rotateX(var(--tiltX))
-    rotateY(var(--tiltY));
-  transform-origin: center;
-  will-change: transform;
+    /* スマホ最適化 */
+    @media (max-width: 720px){
+      .grid{ grid-template-columns: 1fr; }
+      .wrap{ padding: 14px 12px 36px; }
+      .title{ font-size: 24px; }
+      .btn{ min-height: 56px; }
+    }
 
-  animation: cardIn 0.55s cubic-bezier(.2,.9,.2,1);
-}
-
-/* “出っ張ったガラス”のハイライト */
-.card::before{
-  content:"";
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(1200px 220px at 50% 0%,
-      rgba(255,255,255,0.95),
-      rgba(255,255,255,0.40) 35%,
-      transparent 70%),
-    linear-gradient(180deg,
-      rgba(255,255,255,0.55),
-      rgba(255,255,255,0.00) 35%);
-  opacity: 0.75;
-  pointer-events: none;
-}
-.card::after{
-  content:"";
-  position: absolute;
-  inset: 0;
-  border-radius: var(--radius);
-  pointer-events: none;
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.70) inset,
-    0 -1px 0 rgba(2,6,23,0.06) inset;
-}
-
-@keyframes cardIn{
-  from{ opacity: 0; transform: translateY(14px) scale(0.985); }
-  to  { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-@media (prefers-reduced-motion: reduce){
-  body::after, .card{ animation: none !important; }
-}
-
-/* Header */
-.title-row{
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-bottom: 8px;
-}
-.title-accent{
-  width: 30px;
-  height: 30px;
-  border-radius: 999px;
-  background: linear-gradient(135deg, rgba(56,189,248,1), rgba(167,139,250,1), rgba(244,114,182,1));
-  display: grid;
-  place-items: center;
-  color: #fff;
-  font-size: 14px;
-  box-shadow: 0 14px 26px rgba(2,6,23,0.18);
-  border: 1px solid rgba(255,255,255,0.55);
-}
-h2{
-  margin: 0;
-  text-align: center;
-  font-weight: 900;
-  letter-spacing: 0.01em;
-  color: #0b1220;
-}
-
-.status-pill{
-  align-self: center;
-  margin: 6px 0 12px;
-  padding: 7px 12px;
-  border-radius: 999px;
-  font-size: 12px;
-  color: rgba(15,23,42,0.75);
-  background: rgba(255,255,255,0.55);
-  border: 1px solid rgba(2,6,23,0.08);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.75) inset,
-    0 10px 22px rgba(2,6,23,0.06);
-}
-
-/* Profile */
-.profile-row{
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 8px 0 14px;
-}
-.avatar-wrap{
-  width: 60px;
-  height: 60px;
-  border-radius: 18px;
-  padding: 2px;
-  background: linear-gradient(135deg, rgba(56,189,248,1), rgba(167,139,250,1), rgba(244,114,182,1));
-  box-shadow: 0 18px 38px rgba(2,6,23,0.16);
-  overflow: hidden;
-}
-.avatar-inner{
-  width: 100%;
-  height: 100%;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #e8eefc;
-  border: 1px solid rgba(2,6,23,0.08);
-}
-.avatar-inner img{
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-.profile-text{ flex: 1; min-width: 0; }
-.profile-name{
-  margin: 0 0 2px;
-  font-size: 16px;
-  font-weight: 900;
-  color: #0b1220;
-}
-.profile-sub{
-  margin: 0;
-  font-size: 12px;
-  color: rgba(15,23,42,0.72);
-}
-
-/* Links */
-.links{
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 6px;
-}
-
-.link-btn{
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  width: 100%;
-  padding: 11px 12px;
-  border-radius: 16px;
-  text-decoration: none;
-  color: #0b1220;
-
-  background: linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.50));
-  border: 1px solid rgba(2,6,23,0.10);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.85) inset,
-    0 16px 32px rgba(2,6,23,0.10);
-
-  position: relative;
-  overflow: hidden;
-
-  backdrop-filter: blur(14px) saturate(140%);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-
-  opacity: 0;
-  transform: translateY(12px) scale(0.99);
-  transition:
-    opacity 0.50s ease,
-    transform 0.50s cubic-bezier(.2,.9,.2,1),
-    box-shadow 0.18s ease,
-    border-color 0.18s ease,
-    filter 0.18s ease;
-}
-.link-btn.is-in{
-  opacity: 1;
-  transform: translateY(0) scale(1);
-}
-.link-btn::before{
-  content:"";
-  position: absolute;
-  inset: -60% -60%;
-  background: radial-gradient(circle at var(--rx, 50%) var(--ry, 50%),
-    rgba(255,255,255,0.95),
-    rgba(255,255,255,0.35) 35%,
-    transparent 65%);
-  opacity: 0;
-  transform: scale(0.9);
-  transition: opacity 0.20s ease, transform 0.20s ease;
-  pointer-events: none;
-}
-.link-btn.is-press::before{
-  opacity: 0.75;
-  transform: scale(1.15);
-}
-.link-btn:active{
-  transform: translateY(1px) scale(0.995);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.85) inset,
-    0 10px 22px rgba(2,6,23,0.10);
-}
-
-@media (hover:hover){
-  .link-btn:hover{
-    filter: brightness(1.03);
-    border-color: rgba(2,6,23,0.14);
-    box-shadow:
-      0 1px 0 rgba(255,255,255,0.85) inset,
-      0 20px 40px rgba(2,6,23,0.12);
-    transform: translateY(-1px);
-  }
-}
-
-.link-icon{
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.85);
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(2,6,23,0.08);
-  box-shadow:
-    0 1px 0 rgba(255,255,255,0.85) inset,
-    0 10px 20px rgba(2,6,23,0.10);
-  flex-shrink: 0;
-}
-.link-icon img,
-.link-icon svg{ width: 18px; height: 18px; }
-
-.link-main{ flex: 1; min-width: 0; }
-.link-title{
-  font-size: 13px;
-  font-weight: 900;
-  margin: 0;
-  color: #0b1220;
-}
-.link-sub{
-  font-size: 11px;
-  margin: 1px 0 0;
-  color: rgba(15,23,42,0.70);
-}
-.link-arrow{
-  font-size: 18px;
-  opacity: 0.55;
-  transform: translateX(0);
-  transition: transform 0.18s ease, opacity 0.18s ease;
-}
-@media (hover:hover){
-  .link-btn:hover .link-arrow{
-    transform: translateX(3px);
-    opacity: 0.8;
-  }
-}
-
-/* サービス別ボーダー色 */
-.link-btn.discord{ border-color: rgba(88,101,242,0.22); }
-.link-btn.instagram{ border-color: rgba(244,114,182,0.22); }
-.link-btn.x{ border-color: rgba(15,23,42,0.18); }
-.link-btn.line{ border-color: rgba(16,185,129,0.20); }
-.link-btn.secret{ border-color: rgba(56,189,248,0.22); }
-.link-btn.sharefire{ border-color: rgba(249,115,22,0.22); }
-
-.footer{
-  margin-top: 12px;
-  text-align: center;
-  font-size: 11px;
-  color: rgba(15,23,42,0.60);
-  letter-spacing: 0.04em;
-}
-
-/* 小さい端末 */
-@media (max-width: 360px){
-  .card{ padding: 18px 14px 16px; }
-  .profile-sub{ font-size: 11px; }
-}
-</style>
+    /* さらに小さい端末 */
+    @media (max-width: 380px){
+      .avatar{ width: 56px; height:56px; border-radius: 16px; }
+      .label{ font-size: 13px; }
+      .iconBox{ width: 32px; height:32px; border-radius: 11px; }
+      .icon{ width: 21px; height:21px; }
+    }
+  </style>
 </head>
 
 <body>
-  <div class="shell">
-    <div class="card" id="glassCard">
-      <div class="title-row">
-        <div class="title-accent">🔗</div>
-        <h2>リンク集</h2>
-      </div>
-      <div class="status-pill">大木 / Passent のSNS & サイトまとめ</div>
-
-      <div class="profile-row">
-        <div class="avatar-wrap">
-          <div class="avatar-inner">
-            <img src="profile.png" alt="大木 / Passent のアイコン" />
-          </div>
-        </div>
-        <div class="profile-text">
-          <p class="profile-name">大木 / Passent</p>
-          <p class="profile-sub">SimCityガチ勢・マリカガチ勢・Valoエンジョイ勢</p>
-        </div>
-      </div>
-
-      <div class="links" id="links">
-        <a class="link-btn discord" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
-          <div class="link-icon">
-            <img src="https://cdn.simpleicons.org/discord/000000?viewbox=auto&size=20" alt="Discord" loading="lazy" />
-          </div>
-          <div class="link-main">
-            <p class="link-title">Discord</p>
-            <p class="link-sub">@大木 / Passent</p>
-          </div>
-          <div class="link-arrow">›</div>
-        </a>
-
-        <!-- ✅ Instagram ID: ta1boku_ -->
-        <a class="link-btn instagram" href="https://www.instagram.com/ta1boku_" target="_blank" rel="noopener noreferrer">
-          <div class="link-icon">
-            <img src="https://cdn.simpleicons.org/instagram/000000?viewbox=auto&size=20" alt="Instagram" loading="lazy" />
-          </div>
-          <div class="link-main">
-            <p class="link-title">Instagram</p>
-            <p class="link-sub">@ta1boku_</p>
-          </div>
-          <div class="link-arrow">›</div>
-        </a>
-
-        <a class="link-btn x" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
-          <div class="link-icon">
-            <img src="https://cdn.simpleicons.org/x/000000?viewbox=auto&size=20" alt="X" loading="lazy" />
-          </div>
-          <div class="link-main">
-            <p class="link-title">X (旧Twitter)</p>
-            <p class="link-sub">@taiboku_passent</p>
-          </div>
-          <div class="link-arrow">›</div>
-        </a>
-
-        <a class="link-btn line" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
-          <div class="link-icon">
-            <img src="https://cdn.simpleicons.org/line/000000?viewbox=auto&size=20" alt="LINE" loading="lazy" />
-          </div>
-          <div class="link-main">
-            <p class="link-title">LINE</p>
-            <p class="link-sub">友だち追加リンク</p>
-          </div>
-          <div class="link-arrow">›</div>
-        </a>
-
-        <a class="link-btn secret" href="https://secret-chat-tau.vercel.app/" target="_blank" rel="noopener noreferrer">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
-              <path d="M7 11a4 4 0 1 1 8 0v1.3" stroke="black" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
-              <rect x="5" y="11" width="14" height="8" rx="2.5" stroke="black" stroke-width="1.6" />
-              <circle cx="12" cy="15" r="1.2" fill="black" />
-            </svg>
-          </div>
-          <div class="link-main">
-            <p class="link-title">Secret Chat Web</p>
-            <p class="link-sub">P2P通話・チャットサイト</p>
-          </div>
-          <div class="link-arrow">›</div>
-        </a>
-
-        <a class="link-btn sharefire" href="https://file-share-gold.vercel.app/" target="_blank" rel="noopener noreferrer">
-          <div class="link-icon">
-            <svg viewBox="0 0 24 24" fill="none" width="18" height="18" aria-hidden="true">
-              <path d="M12 3s-2 2-2 4.5S12 11 12 13s-1 3.5-3 3.5S6 15.5 6 13c0-2.2 1.1-3.8 2.2-4.9"
-                stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-              <path d="M14 9.5c1 .9 2 2.2 2 3.8 0 2.4-1.5 4.2-4 4.2"
-                stroke="black" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-            </svg>
-          </div>
-          <div class="link-main">
-            <p class="link-title">Share Fire</p>
-            <p class="link-sub">P2Pファイル共有サイト</p>
-          </div>
-          <div class="link-arrow">›</div>
-        </a>
-      </div>
-
-      <div class="footer">taiboku_passent all right reserved</div>
-    </div>
+  <div class="bg" aria-hidden="true">
+    <div class="bg-blobs"></div>
+    <div class="grain"></div>
   </div>
 
-<script>
-(() => {
-  const root = document.documentElement;
-  const card = document.getElementById("glassCard");
-  const btns = [...document.querySelectorAll(".link-btn")];
+  <main class="wrap">
+    <header class="hero glass">
+      <div class="hero-top">
+        <img class="avatar" src="https://ta1b0ku.vercel.app/profile.png" alt="アイコン" loading="lazy" />
+        <div class="hero-text">
+          <h1 class="title">リンク集</h1>
+          <p class="subtitle">SNS &amp; サイトまとめ</p>
+        </div>
+      </div>
+    </header>
 
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+    <section class="grid" aria-label="リンク一覧">
+      <!-- SNSアイコンは「各ドメインのfavicon」を使って自動でそれっぽくしています -->
+      <!-- もし公式アイコン画像(SVG/PNG)に差し替えたいなら、imgのsrcを変更してください -->
 
-  // 背景パララックス
-  const onScroll = () => {
-    const y = window.scrollY || 0;
-    root.style.setProperty("--scrollY", y + "px");
-  };
-  onScroll();
-  window.addEventListener("scroll", onScroll, { passive: true });
+      <a class="btn glass" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
+        <span class="iconBox" aria-hidden="true">
+          <img class="icon" src="https://www.google.com/s2/favicons?domain=discord.com&sz=64" alt="" />
+        </span>
+        <span class="label">Discord @大木 / Passent</span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
 
-  // ボタン出現
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) {
-      if (e.isIntersecting) e.target.classList.add("is-in");
-    }
-  }, { threshold: 0.16 });
-  btns.forEach(b => io.observe(b));
+      <a class="btn glass" href="https://www.instagram.com/ta1boku_" target="_blank" rel="noopener noreferrer">
+        <span class="iconBox" aria-hidden="true">
+          <img class="icon" src="https://www.google.com/s2/favicons?domain=instagram.com&sz=64" alt="" />
+        </span>
+        <span class="label">Instagram @ta1boku_</span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
 
-  // 押した場所に反射
-  const setRipplePoint = (el, clientX, clientY) => {
-    const r = el.getBoundingClientRect();
-    const rx = ((clientX - r.left) / r.width) * 100;
-    const ry = ((clientY - r.top) / r.height) * 100;
-    el.style.setProperty("--rx", rx + "%");
-    el.style.setProperty("--ry", ry + "%");
-  };
+      <a class="btn glass" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
+        <span class="iconBox" aria-hidden="true">
+          <img class="icon" src="https://www.google.com/s2/favicons?domain=x.com&sz=64" alt="" />
+        </span>
+        <span class="label">X (旧Twitter) @taiboku_passent</span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
 
-  btns.forEach((b) => {
-    b.addEventListener("pointerdown", (ev) => {
-      setRipplePoint(b, ev.clientX, ev.clientY);
-      b.classList.add("is-press");
-    }, { passive: true });
+      <a class="btn glass" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
+        <span class="iconBox" aria-hidden="true">
+          <img class="icon" src="https://www.google.com/s2/favicons?domain=line.me&sz=64" alt="" />
+        </span>
+        <span class="label">LINE 友だち追加リンク</span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
 
-    const clear = () => b.classList.remove("is-press");
-    b.addEventListener("pointerup", clear, { passive: true });
-    b.addEventListener("pointercancel", clear, { passive: true });
-    b.addEventListener("pointerleave", clear, { passive: true });
-  });
+      <a class="btn glass" href="https://secret-chat-tau.vercel.app" target="_blank" rel="noopener noreferrer">
+        <span class="iconBox" aria-hidden="true">
+          <img class="icon" src="https://www.google.com/s2/favicons?domain=secret-chat-tau.vercel.app&sz=64" alt="" />
+        </span>
+        <span class="label">Secret Chat Web P2P通話・チャットサイト</span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
 
-  // 端で引っ張った時の伸び
-  let startY = 0;
-  let pulling = false;
-  let currentPull = 0;
-  let rafBack = 0;
+      <a class="btn glass" href="https://file-share-gold.vercel.app" target="_blank" rel="noopener noreferrer">
+        <span class="iconBox" aria-hidden="true">
+          <img class="icon" src="https://www.google.com/s2/favicons?domain=file-share-gold.vercel.app&sz=64" alt="" />
+        </span>
+        <span class="label">Share Fire P2Pファイル共有サイト</span>
+        <span class="chev" aria-hidden="true">›</span>
+      </a>
+    </section>
 
-  const setPull = (v) => {
-    currentPull = v;
-    root.style.setProperty("--pull", v.toFixed(1) + "px");
-  };
-
-  const easeBack = () => {
-    cancelAnimationFrame(rafBack);
-    const step = () => {
-      const v = currentPull * 0.84;
-      if (Math.abs(v) < 0.6) { setPull(0); return; }
-      setPull(v);
-      rafBack = requestAnimationFrame(step);
-    };
-    rafBack = requestAnimationFrame(step);
-  };
-
-  const getScrollState = () => {
-    const y = window.scrollY || 0;
-    const maxY = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-    return { y, maxY };
-  };
-
-  window.addEventListener("touchstart", (e) => {
-    if (!e.touches || e.touches.length !== 1) return;
-    startY = e.touches[0].clientY;
-    pulling = false;
-  }, { passive: true });
-
-  window.addEventListener("touchmove", (e) => {
-    if (!e.touches || e.touches.length !== 1) return;
-
-    const { y, maxY } = getScrollState();
-    const nowY = e.touches[0].clientY;
-    const dy = nowY - startY;
-
-    const atTop = y <= 0;
-    const atBottom = y >= (maxY - 1);
-
-    if ((atTop && dy > 0) || (atBottom && dy < 0)) {
-      pulling = true;
-      e.preventDefault();
-
-      const softened = Math.sign(dy) * Math.sqrt(Math.abs(dy)) * 7.6;
-      setPull(clamp(softened, -120, 120));
-    }
-  }, { passive: false });
-
-  window.addEventListener("touchend", () => {
-    if (!pulling) return;
-    pulling = false;
-    easeBack();
-  }, { passive: true });
-
-  window.addEventListener("touchcancel", () => {
-    if (!pulling) return;
-    pulling = false;
-    easeBack();
-  }, { passive: true });
-
-  // カードのティルト
-  const tiltMax = 6.5;
-  let rafTilt = 0;
-  let targetX = 0, targetY = 0;
-  let curX = 0, curY = 0;
-
-  const applyTilt = () => {
-    cancelAnimationFrame(rafTilt);
-    const step = () => {
-      curX += (targetX - curX) * 0.12;
-      curY += (targetY - curY) * 0.12;
-      root.style.setProperty("--tiltX", curX.toFixed(2) + "deg");
-      root.style.setProperty("--tiltY", curY.toFixed(2) + "deg");
-      if (Math.abs(targetX - curX) < 0.05 && Math.abs(targetY - curY) < 0.05) return;
-      rafTilt = requestAnimationFrame(step);
-    };
-    rafTilt = requestAnimationFrame(step);
-  };
-
-  const setTiltFromPoint = (clientX, clientY) => {
-    const r = card.getBoundingClientRect();
-    const px = (clientX - (r.left + r.width / 2)) / (r.width / 2);
-    const py = (clientY - (r.top + r.height / 2)) / (r.height / 2);
-    targetY = clamp(px * tiltMax, -tiltMax, tiltMax);
-    targetX = clamp(-py * tiltMax, -tiltMax, tiltMax);
-    applyTilt();
-  };
-
-  window.addEventListener("pointermove", (e) => {
-    setTiltFromPoint(e.clientX, e.clientY);
-  }, { passive: true });
-
-  const resetTilt = () => { targetX = 0; targetY = 0; applyTilt(); };
-  window.addEventListener("pointerup", resetTilt, { passive: true });
-  window.addEventListener("pointercancel", resetTilt, { passive: true });
-})();
-</script>
+    <footer class="footer">
+      <span>taiboku_passent all right reserved</span>
+    </footer>
+  </main>
 </body>
 </html>
