@@ -28,7 +28,13 @@
     }
 
     *{ box-sizing:border-box; }
-    html,body{ height:100%; }
+
+    /* 重要：白い裏が出ないように背景色をhtml側にも固定 */
+    html, body{
+      height: 100%;
+      background-color: var(--bg0);
+    }
+
     body{
       margin:0;
       font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Hiragino Kaku Gothic ProN", "Noto Sans JP", "Yu Gothic", "Meiryo", sans-serif;
@@ -37,9 +43,15 @@
                   radial-gradient(1000px 800px at 85% 20%, rgba(255,42,42,0.18), transparent 55%),
                   radial-gradient(900px 700px at 55% 95%, rgba(255,43,214,0.12), transparent 55%),
                   linear-gradient(180deg, var(--bg0), var(--bg1));
-      overflow-x:hidden;
+
+      /* 重要：ページ本体はスクロールさせない（=バウンスで裏が出にくい） */
+      overflow: hidden;
+
+      /* 対応ブラウザではオーバースクロールも抑制 */
+      overscroll-behavior: none;
     }
 
+    /* 背景は固定 */
     .bg{
       position:fixed;
       inset:0;
@@ -64,6 +76,17 @@
       background-image:
         url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
       mix-blend-mode: overlay;
+    }
+
+    /* 重要：スクロールはこの中だけ（ボタン部分が動く） */
+    .scrollArea{
+      height: 100svh;               /* iOSのアドレスバー込みでも安定 */
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;  /* 端での伝播を抑える（効く環境向け） */
+
+      /* iPhoneの下のホームバー分 */
+      padding-bottom: env(safe-area-inset-bottom);
     }
 
     .wrap{
@@ -185,7 +208,6 @@
       transform: translateY(0px) scale(0.995);
     }
 
-    /* 以前の絵文字枠を「SNSアイコン枠」に */
     .iconBox{
       width: 34px;
       height: 34px;
@@ -203,7 +225,6 @@
       height: 22px;
       display:block;
       object-fit: contain;
-      /* faviconが白地でも浮くように、ほんの少し影 */
       filter: drop-shadow(0 3px 10px rgba(0,0,0,0.45));
     }
 
@@ -252,73 +273,73 @@
     <div class="grain"></div>
   </div>
 
-  <main class="wrap">
-    <header class="hero glass">
-      <div class="hero-top">
-        <img class="avatar" src="https://ta1b0ku.vercel.app/profile.png" alt="アイコン" loading="lazy" />
-        <div class="hero-text">
-          <h1 class="title">リンク集</h1>
-          <p class="subtitle">SNS &amp; サイトまとめ</p>
+  <!-- スクロールはこの中だけ -->
+  <div class="scrollArea" role="document">
+    <main class="wrap">
+      <header class="hero glass">
+        <div class="hero-top">
+          <img class="avatar" src="https://ta1b0ku.vercel.app/profile.png" alt="アイコン" loading="lazy" />
+          <div class="hero-text">
+            <h1 class="title">リンク集</h1>
+            <p class="subtitle">SNS &amp; サイトまとめ</p>
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
 
-    <section class="grid" aria-label="リンク一覧">
-      <!-- SNSアイコンは「各ドメインのfavicon」を使って自動でそれっぽくしています -->
-      <!-- もし公式アイコン画像(SVG/PNG)に差し替えたいなら、imgのsrcを変更してください -->
+      <section class="grid" aria-label="リンク一覧">
+        <a class="btn glass" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
+          <span class="iconBox" aria-hidden="true">
+            <img class="icon" src="https://www.google.com/s2/favicons?domain=discord.com&sz=64" alt="" />
+          </span>
+          <span class="label">Discord @大木 / Passent</span>
+          <span class="chev" aria-hidden="true">›</span>
+        </a>
 
-      <a class="btn glass" href="https://discord.com/users/1062279074283782164" target="_blank" rel="noopener noreferrer">
-        <span class="iconBox" aria-hidden="true">
-          <img class="icon" src="https://www.google.com/s2/favicons?domain=discord.com&sz=64" alt="" />
-        </span>
-        <span class="label">Discord @大木 / Passent</span>
-        <span class="chev" aria-hidden="true">›</span>
-      </a>
+        <a class="btn glass" href="https://www.instagram.com/ta1boku_" target="_blank" rel="noopener noreferrer">
+          <span class="iconBox" aria-hidden="true">
+            <img class="icon" src="https://www.google.com/s2/favicons?domain=instagram.com&sz=64" alt="" />
+          </span>
+          <span class="label">Instagram @ta1boku_</span>
+          <span class="chev" aria-hidden="true">›</span>
+        </a>
 
-      <a class="btn glass" href="https://www.instagram.com/ta1boku_" target="_blank" rel="noopener noreferrer">
-        <span class="iconBox" aria-hidden="true">
-          <img class="icon" src="https://www.google.com/s2/favicons?domain=instagram.com&sz=64" alt="" />
-        </span>
-        <span class="label">Instagram @ta1boku_</span>
-        <span class="chev" aria-hidden="true">›</span>
-      </a>
+        <a class="btn glass" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
+          <span class="iconBox" aria-hidden="true">
+            <img class="icon" src="https://www.google.com/s2/favicons?domain=x.com&sz=64" alt="" />
+          </span>
+          <span class="label">X (旧Twitter) @taiboku_passent</span>
+          <span class="chev" aria-hidden="true">›</span>
+        </a>
 
-      <a class="btn glass" href="https://x.com/taiboku_passent" target="_blank" rel="noopener noreferrer">
-        <span class="iconBox" aria-hidden="true">
-          <img class="icon" src="https://www.google.com/s2/favicons?domain=x.com&sz=64" alt="" />
-        </span>
-        <span class="label">X (旧Twitter) @taiboku_passent</span>
-        <span class="chev" aria-hidden="true">›</span>
-      </a>
+        <a class="btn glass" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
+          <span class="iconBox" aria-hidden="true">
+            <img class="icon" src="https://www.google.com/s2/favicons?domain=line.me&sz=64" alt="" />
+          </span>
+          <span class="label">LINE 友だち追加リンク</span>
+          <span class="chev" aria-hidden="true">›</span>
+        </a>
 
-      <a class="btn glass" href="https://line.me/ti/p/8dDJb7WNhv" target="_blank" rel="noopener noreferrer">
-        <span class="iconBox" aria-hidden="true">
-          <img class="icon" src="https://www.google.com/s2/favicons?domain=line.me&sz=64" alt="" />
-        </span>
-        <span class="label">LINE 友だち追加リンク</span>
-        <span class="chev" aria-hidden="true">›</span>
-      </a>
+        <a class="btn glass" href="https://secret-chat-tau.vercel.app" target="_blank" rel="noopener noreferrer">
+          <span class="iconBox" aria-hidden="true">
+            <img class="icon" src="https://www.google.com/s2/favicons?domain=secret-chat-tau.vercel.app&sz=64" alt="" />
+          </span>
+          <span class="label">Secret Chat Web P2P通話・チャットサイト</span>
+          <span class="chev" aria-hidden="true">›</span>
+        </a>
 
-      <a class="btn glass" href="https://secret-chat-tau.vercel.app" target="_blank" rel="noopener noreferrer">
-        <span class="iconBox" aria-hidden="true">
-          <img class="icon" src="https://www.google.com/s2/favicons?domain=secret-chat-tau.vercel.app&sz=64" alt="" />
-        </span>
-        <span class="label">Secret Chat Web P2P通話・チャットサイト</span>
-        <span class="chev" aria-hidden="true">›</span>
-      </a>
+        <a class="btn glass" href="https://file-share-gold.vercel.app" target="_blank" rel="noopener noreferrer">
+          <span class="iconBox" aria-hidden="true">
+            <img class="icon" src="https://www.google.com/s2/favicons?domain=file-share-gold.vercel.app&sz=64" alt="" />
+          </span>
+          <span class="label">Share Fire P2Pファイル共有サイト</span>
+          <span class="chev" aria-hidden="true">›</span>
+        </a>
+      </section>
 
-      <a class="btn glass" href="https://file-share-gold.vercel.app" target="_blank" rel="noopener noreferrer">
-        <span class="iconBox" aria-hidden="true">
-          <img class="icon" src="https://www.google.com/s2/favicons?domain=file-share-gold.vercel.app&sz=64" alt="" />
-        </span>
-        <span class="label">Share Fire P2Pファイル共有サイト</span>
-        <span class="chev" aria-hidden="true">›</span>
-      </a>
-    </section>
-
-    <footer class="footer">
-      <span>taiboku_passent all right reserved</span>
-    </footer>
-  </main>
+      <footer class="footer">
+        <span>taiboku_passent all right reserved</span>
+      </footer>
+    </main>
+  </div>
 </body>
 </html>
